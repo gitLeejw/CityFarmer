@@ -135,6 +135,7 @@ GameObject:
   - component: {fileID: 244347045}
   - component: {fileID: 244347044}
   - component: {fileID: 244347046}
+  - component: {fileID: 244347047}
   m_Layer: 0
   m_Name: Tilemap
   m_TagString: Untagged
@@ -3716,6 +3717,19 @@ TilemapCollider2D:
   m_Offset: {x: 0, y: 0}
   m_MaximumTileChangeCount: 1000
   m_ExtrusionFactor: 0
+--- !u!114 &244347047
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 244347042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2537b5fdfcd31184a8d5737235325d89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tilemap: {fileID: 244347045}
 --- !u!1 &277702367
 GameObject:
   m_ObjectHideFlags: 0
@@ -3968,11 +3982,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7bb9acb2cffc5f45abddc238a0ad9b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_PositionIntKeys: []
   m_PositionIntValues: 
+  m_PositionStringKeys: []
   m_PositionStringValues: []
+  m_PositionFloatKeys: []
   m_PositionFloatValues: []
+  m_PositionDoubleKeys: []
   m_PositionDoubleValues: []
+  m_PositionObjectKeys: []
   m_PositionObjectValues: []
+  m_PositionColorKeys: []
   m_PositionColorValues: []
 --- !u!156049354 &1514758991
 Grid:
