@@ -2,12 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Node : MonoBehaviour
+
+public class Node : Tile
 {
-    // Start is called before the first frame update
+    public Sprite[] NodeSprites;
+    private int userLevel;
+    private UserInfo userInfo;
     void Start()
     {
-        
+        userInfo = GameObject.Find("GameManager").GetComponent<UserInfo>();
+        userLevel = userInfo.UserLevel;
     }
 
     // Update is called once per frame
