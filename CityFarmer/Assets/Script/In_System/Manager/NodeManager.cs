@@ -22,7 +22,6 @@ using UnityEngine.Tilemaps;
             var tile = tilemap.GetTile<TileBase>(pos);
             
             // 정보 초기화
-            Debug.Log(tile);
         }
     }
 
