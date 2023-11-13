@@ -10,7 +10,8 @@ public class Item : MonoBehaviour
     public int ItemPrice { get; private set; }
     public enum Itemtype
     {
-
+        disposable,
+        costume
     }
 
 }

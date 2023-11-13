@@ -21,6 +21,7 @@ public class MapTexture
 
 public class Land : MonoBehaviour
 {
+    
     public enum LandState
     {
         Harvesting,

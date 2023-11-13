@@ -7,30 +7,13 @@ public class Maria : MonoBehaviour
 {
     public static MySqlConnection SqlConnection;
 
-    static string _ipAddress = "13.209.143.246";
-    static string _dbId = "poly";
-    static string _dbPw = "Poly01!";
-    static string _dbName = "myDB";
+    static string _ipAddress = "13.209.206.108";
+    static string _dbId = "root";
+    static string _dbPw = "dnflskfk1";
+    static string _dbName = "unityDB";
 
-    string strConnection = string.Format("server={0};uid={1};pwd={2};database={3};charset=utf8 ;", _ipAddress, _dbId, _dbPw, _dbName);
-    private void Awake()
-    {
-        try
-        {
-            SqlConnection = new MySqlConnection(strConnection);
-        }
-        catch(System.Exception e)
-        {
-            Debug.Log(e.ToString());
-        }
-    }
-    void Start()
-    {
-        string query = "SELECT * FROM USER";
-        DataSet dataSet = OnSelectRequest(query, "USER");
-        Debug.Log(dataSet.GetXml());
-        
-    }
+    public static string strConnection = string.Format("server={0};uid={1};pwd={2};database={3};charset=utf8 ;", _ipAddress, _dbId, _dbPw, _dbName);
+  
     //데이터 , 삽입, 업데이트 쿼리 함수
     public static bool OnInsertOrUpdateRequest(string str_query)
     {
