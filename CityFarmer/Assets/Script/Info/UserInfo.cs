@@ -2,15 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UserInfo
-{
-    public int UserSeq { get; private set; }
-    public string UserId { get; private set; }
-    public int UserLevel { get; private set; }
-    public string UserName { get; private set; }
-    public string UserEncyclopedia { get; private set; }
-    public string UserReg { get; private set; }
 
-   
+public class UserInfo : MonoBehaviour
+{
+    public static int UserSeq;
+    public string UserId { get;  set; }
+    public int UserLevel { get;  set; }
+    public string UserName { get;  set; }
+    public string UserEncyclopedia { get;  set; }
+    public string UserReg { get;  set; }
+
+    private void Start()
+    {
+        Debug.Log(UserId);
+        Debug.Log(UserSeq);
+        Debug.Log(UserLevel);
+        Debug.Log(UserReg);
+    }
 
 }

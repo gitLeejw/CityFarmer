@@ -4,14 +4,15 @@ using UnityEngine;
 
 public class Inventory
 {
-    public int userSeq { get; private set; }
-    public int ItemSeq { get; private set; }
-    public string ItemName { get; private set; }
-    public string ItemText { get; private set; }
-    public int ItemPrice { get; private set; }
+
+    public List<int> ItemSeqs { get;  set; }
+    public string ItemName { get;  set; }
+    public string ItemText { get;  set; }
+    public int ItemPrice { get;  set; }
     public enum Itemtype
     {
-
+        disposable,
+        costume
     }
 
 
