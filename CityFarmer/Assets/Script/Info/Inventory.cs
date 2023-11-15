@@ -2,18 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Inventory
+[System.Serializable]
+public class Inventory : MonoBehaviour
 {
+    public object _id;
+    public int UserSeq;
+    public List<int> ItemSeqs;
 
-    public List<int> ItemSeqs { get;  set; }
-    public string ItemName { get;  set; }
-    public string ItemText { get;  set; }
-    public int ItemPrice { get;  set; }
-    public enum Itemtype
-    {
-        disposable,
-        costume
-    }
+    public List<int> FoodSeqs;
 
-
+    public List<int> itemValues;
+    public List<int> FoodValues;
 }
