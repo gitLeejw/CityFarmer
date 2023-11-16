@@ -25,6 +25,7 @@ public class InventoryManager : MonoBehaviour
 
 
     }
+
     public void LoadInventory()
     {
         BsonDocument bson = MongoDB.LoadMongo("Inventory")[0];
@@ -45,6 +46,7 @@ public class InventoryManager : MonoBehaviour
         for (int inventoryIndex = 0; inventoryIndex < Inventory.FoodSeqs.Count; inventoryIndex++)
         {
             Food food = FindFoodBySeq(foods, Inventory.FoodSeqs[inventoryIndex]);
+            
             PlayerFoodList.Add(food);
             PlayerFoodValueList.Add(Inventory.FoodValues[inventoryIndex]);
         }
