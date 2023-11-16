@@ -11,6 +11,6 @@ public class Inventory : MonoBehaviour
 
     public List<int> FoodSeqs;
 
-    public List<int> itemValues;
+    public List<int> ItemValues;
     public List<int> FoodValues;
 }

@@ -5,6 +5,7 @@ using MongoDB.Driver;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
+using System.Reflection;
 
 public class Mongo : MonoBehaviour
 {
@@ -12,14 +13,12 @@ public class Mongo : MonoBehaviour
    public static IMongoDatabase database;
    
     void Start()
-    {   
-       
-      
+    {
+
+
+  
         
-        
-      
-       
-   
+
     }
     public  void MongoDBConnection()
     {
@@ -50,9 +49,10 @@ public class Mongo : MonoBehaviour
     {
         IMongoCollection<BsonDocument> collection = database.GetCollection<BsonDocument>(DB);
 
+
+        
         
 
-      
         string json = JsonUtility.ToJson(type);
         BsonDocument bson = JsonToBson(json);
        
@@ -61,24 +61,34 @@ public class Mongo : MonoBehaviour
 
         Debug.Log("Data inserted successfully!");
     }
-    public void UpdateInventory<T>(Inventory inventory,T type)
+    public void UpdateMongo<T>(Inventory inventory,Encyclopedia encyclopedia,T type)
     {
-        IMongoCollection<BsonDocument> collection = database.GetCollection<BsonDocument>("Inventory");
+      
 
 
+        
 
-        Debug.Log(UserInfo.UserSeq);
+        string typetext = type.GetType().ToString();
        
+        Debug.Log(UserInfo.UserSeq);
+        IMongoCollection<BsonDocument> collection = database.GetCollection<BsonDocument>(typetext);
         var filter = Builders<BsonDocument>.Filter.Eq("UserSeq", UserInfo.UserSeq);
-        if()
+        switch (typetext)
         {
-
+            case "Inventory":
+                
+                var InventoryItemupdate = Builders<BsonDocument>.Update.Set("ItemSeqs", inventory.ItemSeqs);
+                var InventoryFoodupdate = Builders<BsonDocument>.Update.Set("FoodSeqs", inventory.FoodSeqs);
+                // 데이터 저장
+                var inventoryItemResult = collection.UpdateOne(filter, InventoryItemupdate);
+                var inventoryFoodResult = collection.UpdateOne(filter, InventoryFoodupdate); break;
+            case "Encyclopedia":
+                var EncyclopediaFoodupdate = Builders<BsonDocument>.Update.Set("FoodSeqs", encyclopedia.FoodSeqs);            
+                var EncyclopediaFoodresult = collection.UpdateOne(filter, EncyclopediaFoodupdate);
+                break;
+           
         }
-        var update = Builders<BsonDocument>.Update.Set("ItemSeqs", inventory.ItemSeqs);
-        var update2 = Builders<BsonDocument>.Update.Set("FoodSeqs", inventory.FoodSeqs);
-        // 데이터 저장
-        var result = collection.UpdateOne(filter, update);
-        var result2 = collection.UpdateOne(filter, update2);
+       
    
         Debug.Log("Data inserted successfully!");
     }

@@ -23,7 +23,13 @@ public class Item
 
     public bool ItemMoney { get; set; }
 
-    public Sprite ItemSprite { get; set; }
+    public string ItemSpriteString { get; set; }
+    public Sprite ItemSprite;
+
+    public Sprite itemSprite()
+    {
+        return Resources.Load<Sprite>(ItemSpriteString);
+    }
 }
 [Serializable]
 public class Food 
@@ -40,8 +46,13 @@ public class Food
         Meat
     }
     public Foodtype foodtype { get; set; }
+    public string FoodSpriteString { get; set; }
+    public Sprite FoodSprite { get; set; }
 
-    public Sprite foodSprite { get; set; }
+    public Sprite foodSprite()
+    {
+        return Resources.Load<Sprite>(FoodSpriteString);
+    }
 }
 
 public class InfoManager : MonoBehaviour
@@ -55,8 +66,7 @@ public class InfoManager : MonoBehaviour
 
     public List<Food> Foods = new List<Food>();
     
-    private Sprite[] foodSprites;
-    private Sprite[] itemSprites;
+   
     private void Awake()
     {
         
@@ -64,8 +74,7 @@ public class InfoManager : MonoBehaviour
       
         Items = new List<Item>();
         Foods = new List<Food>();
-        foodSprites = Resources.LoadAll<Sprite>("Sprite/Food");
-        itemSprites = Resources.LoadAll<Sprite>("Sprite/Item");
+       
         _loadFood();
         _loadItem();
        
@@ -130,8 +139,9 @@ public class InfoManager : MonoBehaviour
                 food.FoodTime = time.Split("T")[1];
                 string type =node.SelectSingleNode("FOOD_TYPE").InnerText;
                 food.FoodLevel = System.Convert.ToInt32(node.SelectSingleNode("FOOD_LEVEL").InnerText);
-                if(foodCount<foodSprites.Length)
-                food.foodSprite = foodSprites[foodCount];
+                food.FoodSpriteString = node.SelectSingleNode("FOOD_SPRITE").InnerText;
+                food.FoodSprite = food.foodSprite();
+
                 switch (type)
                 {
                     case "Plant": food.foodtype = Food.Foodtype.Plant; break;
@@ -169,8 +179,9 @@ public class InfoManager : MonoBehaviour
                 item.ItemText = node.SelectSingleNode("ITEM_TEXT").InnerText;
                 item.ItemPrice = System.Convert.ToInt32(node.SelectSingleNode("ITEM_PRICE").InnerText);
                 string type = node.SelectSingleNode("ITEM_TYPE").InnerText;
-                if(itemCount<itemSprites.Length)
-                item.ItemSprite = itemSprites[itemCount];
+                
+                item.ItemSpriteString = node.SelectSingleNode("ITEM_SPRITE").InnerText;
+                item.ItemSprite = item.itemSprite();
                 switch (type)
                 {
                     case "disposable": item.itemtype = Item.Itemtype.disposable; break;
