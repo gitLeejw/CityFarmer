@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Data;
 using MySql.Data.MySqlClient;
-public class Maria : MonoBehaviour
+public class Maria 
 {
     public static MySqlConnection SqlConnection;
 
@@ -56,13 +56,5 @@ public class Maria : MonoBehaviour
             return null;
         }
     }
-    private void OnApplicationQuit()
-    {
-        SqlConnection.Close();
-    }
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+   
 }

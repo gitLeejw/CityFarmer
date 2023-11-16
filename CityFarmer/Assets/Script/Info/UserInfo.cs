@@ -12,12 +12,10 @@ public class UserInfo : MonoBehaviour
     public string UserEncyclopedia { get;  set; }
     public string UserReg { get;  set; }
 
-    private void Start()
-    {
-        Debug.Log(UserId);
-        Debug.Log(UserSeq);
-        Debug.Log(UserLevel);
-        Debug.Log(UserReg);
-    }
+    public int UserLandLevel { get; set; }
+
+    public Land[] Lands = new Land[9];
+
+   
 
 }
