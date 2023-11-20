@@ -8,7 +8,6 @@ public class Encyclopedia : MonoBehaviour
     public object _id;
     public int UserSeq;
     public List<int> FoodSeqs;
-
    /* public List<Food> Foods { get; set; }
     // TODO : 농작물 종류, 설명 작업
     public int CurrentCollectionCrops { get; set; }

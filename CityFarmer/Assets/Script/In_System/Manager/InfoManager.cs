@@ -1,10 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System.Data;
 using MySql.Data.MySqlClient;
 using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Xml;
+using UnityEngine;
 
 
 [Serializable]
@@ -16,15 +15,15 @@ public class Item
     public int ItemPrice { get; set; }
     public enum Itemtype
     {
-        disposable,
-        costume
+        Disposable,
+        Costume
     }
     public Itemtype itemtype { get; set; }
 
     public bool ItemMoney { get; set; }
 
     public string ItemSpriteString { get; set; }
-    public Sprite ItemSprite;
+    public Sprite ItemSprite{ get; set; }
 
     public Sprite itemSprite()
     {
@@ -32,7 +31,7 @@ public class Item
     }
 }
 [Serializable]
-public class Food 
+public class Food
 {
     public int FoodSeq { get; set; }
     public string FoodName { get; set; }
@@ -57,53 +56,83 @@ public class Food
 
 public class InfoManager : MonoBehaviour
 {
-   
     public UserInfo UserInfo;
     public Money Money;
-    
-    public List<Item> Items = new List<Item>();
     public Land Land;
-
+    public List<Item> Items = new List<Item>();
     public List<Food> Foods = new List<Food>();
-    
-   
+    private static InfoManager _instance;
+    // 인스턴스에 접근하기 위한 프로퍼티
+    public static InfoManager Instance
+    {
+        get
+        {
+            // 인스턴스가 없는 경우에 접근하려 하면 인스턴스를 할당해준다.
+            if (!_instance)
+            {
+                _instance = FindObjectOfType(typeof(InfoManager)) as InfoManager;
+
+                if (_instance == null)
+                    Debug.Log("no Singleton obj");
+            }
+            return _instance;
+        }
+    }
+
     private void Awake()
     {
-        
-        Login("kos1515", "dnflskfk1");
-      
-        Items = new List<Item>();
-        Foods = new List<Food>();
-       
-        _loadFood();
-        _loadItem();
-       
-
-
-     
-
-
-
-
+        if (_instance == null)
+        {
+            _instance = this;
+        }
+        // 인스턴스가 존재하는 경우 새로생기는 인스턴스를 삭제한다.
+        else if (_instance != this)
+        {
+            Destroy(gameObject);
+        }
+        // 아래의 함수를 사용하여 씬이 전환되더라도 선언되었던 인스턴스가 파괴되지 않는다.
+        DontDestroyOnLoad(gameObject);
     }
-    private void Start()
+    public void InsertMoney()
     {
-      
-         
-     
+        StartSQL();
+        string query = "INSERT INTO MONEY ( USER_SEQ, MONEY_GOLD,MONEY_RUBY )VALUES('"+UserInfo.UserSeq+"',0,0)";
+
+        Maria.OnInsertOrUpdateRequest(query);
+        Maria.SqlConnection.Close();
     }
+    public void LoadMoney()
+    {
+        StartSQL();
+        string query = "SELECT * FROM MONEY WHERE USER_SEQ = '"+UserInfo.UserSeq+"'" ;
+        DataSet dataSet = Maria.OnSelectRequest(query,"MONEY");
+        XmlDocument xmlDocument = new XmlDocument();
+        xmlDocument.LoadXml(dataSet.GetXml());
+        if (xmlDocument != null)
+        {
+            XmlNodeList data = xmlDocument.SelectNodes("NewDataSet/MONEY");
+         
+
+            foreach (XmlNode node in data)
+            {
+                Money.moneyGold = System.Convert.ToInt32(node.SelectSingleNode("MONEY_GOLD").InnerText);
+                Money.moneyRuby = System.Convert.ToInt32(node.SelectSingleNode("MONEY_RUBY").InnerText);
+            }
+        }
+        Maria.SqlConnection.Close();    
+    }
+
+
     private XmlDocument OnLoadData(string DB)
     {
-
-        startSQL();
+        StartSQL();
         string query = "SELECT * FROM " + DB;
         DataSet dataSet = Maria.OnSelectRequest(query, DB);
-
         XmlDocument xmlDocument = new XmlDocument();
         xmlDocument.LoadXml(dataSet.GetXml());
         return xmlDocument;
     }
-    private void startSQL()
+    private void StartSQL()
     {
         try
         {
@@ -113,20 +142,17 @@ public class InfoManager : MonoBehaviour
         {
             Debug.Log(e.ToString());
         }
-
     }
-    private void _loadFood()
+    public void LoadFood()
     {
+        Foods.Clear();
         XmlDocument xmlDocument = OnLoadData("FOOD");
-    
-      
 
-        if (xmlDocument != null) {
-
-            
+        if (xmlDocument != null)
+        {
             XmlNodeList data = xmlDocument.SelectNodes("NewDataSet/FOOD");
-
             int foodCount = 0;
+
             foreach (XmlNode node in data)
             {
                 foodCount++;
@@ -135,41 +161,35 @@ public class InfoManager : MonoBehaviour
                 food.FoodName = node.SelectSingleNode("FOOD_NAME").InnerText;
                 food.FoodText = node.SelectSingleNode("FOOD_TEXT").InnerText;
                 food.FoodPrice = System.Convert.ToInt32(node.SelectSingleNode("FOOD_PRICE").InnerText);
+
                 string time = node.SelectSingleNode("FOOD_TIME").InnerText;
                 food.FoodTime = time.Split("T")[1];
-                string type =node.SelectSingleNode("FOOD_TYPE").InnerText;
                 food.FoodLevel = System.Convert.ToInt32(node.SelectSingleNode("FOOD_LEVEL").InnerText);
                 food.FoodSpriteString = node.SelectSingleNode("FOOD_SPRITE").InnerText;
                 food.FoodSprite = food.foodSprite();
 
+                string type = node.SelectSingleNode("FOOD_TYPE").InnerText;
                 switch (type)
                 {
                     case "Plant": food.foodtype = Food.Foodtype.Plant; break;
                     case "Meat": food.foodtype = Food.Foodtype.Meat; break;
-
                 }
-                
                 Foods.Add(food);
-               
             }
-
         }
-
         Maria.SqlConnection.Close();
     }
-    private void _loadItem()
-    {
-        
 
+    public void LoadItem()
+    {
+        Items.Clear();
         XmlDocument xmlDocument = OnLoadData("ITEM");
 
         if (xmlDocument != null)
         {
-
-
             XmlNodeList data = xmlDocument.SelectNodes("NewDataSet/ITEM");
-
             int itemCount = 0;
+
             foreach (XmlNode node in data)
             {
                 itemCount++;
@@ -178,62 +198,73 @@ public class InfoManager : MonoBehaviour
                 item.ItemName = node.SelectSingleNode("ITEM_NAME").InnerText;
                 item.ItemText = node.SelectSingleNode("ITEM_TEXT").InnerText;
                 item.ItemPrice = System.Convert.ToInt32(node.SelectSingleNode("ITEM_PRICE").InnerText);
-                string type = node.SelectSingleNode("ITEM_TYPE").InnerText;
-                
                 item.ItemSpriteString = node.SelectSingleNode("ITEM_SPRITE").InnerText;
                 item.ItemSprite = item.itemSprite();
+
+                string type = node.SelectSingleNode("ITEM_TYPE").InnerText;
+
                 switch (type)
                 {
-                    case "disposable": item.itemtype = Item.Itemtype.disposable; break;
-                    case "costume": item.itemtype = Item.Itemtype.costume; break;
+                    case "disposable": item.itemtype = Item.Itemtype.Disposable; break;
+                    case "costume": item.itemtype = Item.Itemtype.Costume; break;
 
                 }
+
                 item.ItemMoney = System.Convert.ToBoolean(node.SelectSingleNode("ITEM_MONEY").InnerText);
                 Items.Add(item);
-
             }
-
         }
-
         Maria.SqlConnection.Close();
     }
-    public void Login(string InfoUserId,string InfoUserPassword)
+
+    public bool Login(string InfoUserId, string InfoUserPassword)
     {
-        startSQL();
+        StartSQL();
+        UserInfo.UserSeq = 0;
         //로그인 쿼리
         string query = "SELECT * FROM USER WHERE USER_ID = '" + InfoUserId + "' AND USER_PASSWORD = '" + InfoUserPassword + "'";
         DataSet dataSet = Maria.OnSelectRequest(query, "USER");
-       
+
         XmlDocument xmlDocument = new XmlDocument();
         xmlDocument.LoadXml(dataSet.GetXml());
 
         if (xmlDocument != null)
         {
             XmlNodeList user = xmlDocument.SelectNodes("NewDataSet/USER");
+          
             foreach (XmlNode node in user)
             {
+                
                 UserInfo.UserSeq = System.Convert.ToInt32(node.SelectSingleNode("USER_SEQ").InnerText);
                 UserInfo.UserLevel = System.Convert.ToInt32(node.SelectSingleNode("USER_LEVEL").InnerText);
                 UserInfo.UserId = node.SelectSingleNode("USER_ID").InnerText;
                 UserInfo.UserName = node.SelectSingleNode("USER_NAME").InnerText;
                 UserInfo.UserReg = node.SelectSingleNode("USER_REG").InnerText;
             }
-
         }
-      
+        if (UserInfo.UserSeq == 0)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
         Maria.SqlConnection.Close();
     }
-    public void SignUp(string InfoUserId, string InfoUserPassword,string InfoUserName){
-        startSQL();
+
+    public void SignUp(string InfoUserId, string InfoUserPassword, string InfoUserName)
+    {
+        StartSQL();
         string query = "SELECT * FROM USER WHERE USER_ID = '" + InfoUserId + "'";
         DataSet dataSet = Maria.OnSelectRequest(query, "USER");
+
         if (dataSet.GetXml().IndexOf("SEQ") >= 0)
         {
             Debug.Log("이미 가입된 아이디입니다.");
         }
         else
         {
-
             //회원가입 쿼리
             query = "INSERT INTO USER ( USER_ID, USER_LEVEL, USER_NAME, USER_PASSWORD )VALUES('" + InfoUserId + "', '1', '" + InfoUserName + "','" + InfoUserPassword + "')";
             if (Maria.OnInsertOrUpdateRequest(query))
@@ -243,12 +274,7 @@ public class InfoManager : MonoBehaviour
             else
             {
                 Debug.Log("회원가입에 실패하였습니다.");
-
             }
         }
-   
-      
     }
-	
-
 }
