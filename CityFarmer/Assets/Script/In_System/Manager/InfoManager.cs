@@ -4,55 +4,10 @@ using System.Collections.Generic;
 using System.Data;
 using System.Xml;
 using UnityEngine;
+using System.Linq;
+using MongoDB.Bson;
 
 
-[Serializable]
-public class Item
-{
-    public int ItemSeq { get; set; }
-    public string ItemName { get; set; }
-    public string ItemText { get; set; }
-    public int ItemPrice { get; set; }
-    public enum Itemtype
-    {
-        Disposable,
-        Costume
-    }
-    public Itemtype itemtype { get; set; }
-
-    public bool ItemMoney { get; set; }
-
-    public string ItemSpriteString { get; set; }
-    public Sprite ItemSprite{ get; set; }
-
-    public Sprite itemSprite()
-    {
-        return Resources.Load<Sprite>(ItemSpriteString);
-    }
-}
-[Serializable]
-public class Food
-{
-    public int FoodSeq { get; set; }
-    public string FoodName { get; set; }
-    public string FoodText { get; set; }
-    public int FoodLevel { get; set; }
-    public string FoodTime { get; set; }
-    public int FoodPrice { get; set; }
-    public enum Foodtype
-    {
-        Plant,
-        Meat
-    }
-    public Foodtype foodtype { get; set; }
-    public string FoodSpriteString { get; set; }
-    public Sprite FoodSprite { get; set; }
-
-    public Sprite foodSprite()
-    {
-        return Resources.Load<Sprite>(FoodSpriteString);
-    }
-}
 
 public class InfoManager : MonoBehaviour
 {
@@ -120,6 +75,28 @@ public class InfoManager : MonoBehaviour
             }
         }
         Maria.SqlConnection.Close();    
+    }
+    public T FindBySeq<T>(List<T> TList, int Seq)
+    {
+        // LINQ를 사용하여 itemSeq와 일치하는 Item 찾기
+        T found = TList.FirstOrDefault(t => TypeSeq(t) == Seq);
+        return found;
+    }
+    public int TypeSeq<T>(T t)
+    {
+
+        string type = t.ToJson().Split("Name")[0];
+        string typeSeq = "";
+
+        for (int i = 0; i < type.Length; i++)
+        {
+            char ch = type[i];
+            if ('0' <= ch && ch <= '9')
+            {
+                typeSeq += ch;
+            }
+        }
+        return int.Parse(typeSeq);
     }
 
 
