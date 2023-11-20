@@ -383,9 +383,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 334885049}
     m_Modifications:
-    - target: {fileID: 3099654932726177232, guid: b868f9cd38ec2ad40a5653717a85aa59, type: 3}
-      propertyPath: m_CullTransparentMesh
-      value: 0
+
+    - target: {fileID: 3099654932583012250, guid: b868f9cd38ec2ad40a5653717a85aa59, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3099654932788021054, guid: b868f9cd38ec2ad40a5653717a85aa59, type: 3}
       propertyPath: m_RootOrder

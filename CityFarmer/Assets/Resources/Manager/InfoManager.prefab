@@ -1,0 +1,184 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8813677843113518607
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8813677843113518605}
+  - component: {fileID: 8813677843113518602}
+  - component: {fileID: 8813677843113518603}
+  - component: {fileID: 8813677843113518604}
+  - component: {fileID: 8813677843113518711}
+  - component: {fileID: 8813677843113518600}
+  - component: {fileID: 8813677843113518601}
+  m_Layer: 0
+  m_Name: InfoManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8813677843113518605
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8813677843113518607}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 6.0572777, y: -0.48340353, z: 0.00060619554}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8813677843113518602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8813677843113518607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ee25605e8dee1b42bae3fba55731f05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Lands:
+  - LandSeq: 0
+    UserSeq: 0
+    FoodSeq: 0
+    LandTime: 
+    timer: 0
+    LandSprite: {fileID: 0}
+  - LandSeq: 0
+    UserSeq: 0
+    FoodSeq: 0
+    LandTime: 
+    timer: 0
+    LandSprite: {fileID: 0}
+  - LandSeq: 0
+    UserSeq: 0
+    FoodSeq: 0
+    LandTime: 
+    timer: 0
+    LandSprite: {fileID: 0}
+  - LandSeq: 0
+    UserSeq: 0
+    FoodSeq: 0
+    LandTime: 
+    timer: 0
+    LandSprite: {fileID: 0}
+  - LandSeq: 0
+    UserSeq: 0
+    FoodSeq: 0
+    LandTime: 
+    timer: 0
+    LandSprite: {fileID: 0}
+  - LandSeq: 0
+    UserSeq: 0
+    FoodSeq: 0
+    LandTime: 
+    timer: 0
+    LandSprite: {fileID: 0}
+  - LandSeq: 0
+    UserSeq: 0
+    FoodSeq: 0
+    LandTime: 
+    timer: 0
+    LandSprite: {fileID: 0}
+  - LandSeq: 0
+    UserSeq: 0
+    FoodSeq: 0
+    LandTime: 
+    timer: 0
+    LandSprite: {fileID: 0}
+  - LandSeq: 0
+    UserSeq: 0
+    FoodSeq: 0
+    LandTime: 
+    timer: 0
+    LandSprite: {fileID: 0}
+--- !u!114 &8813677843113518603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8813677843113518607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77dc7551059e24b43b81f819c6184a90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UserInfo: {fileID: 8813677843113518602}
+  Money: {fileID: 8813677843113518711}
+  Items: []
+  Land:
+    LandSeq: 0
+    UserSeq: 0
+    FoodSeq: 0
+    LandTime: 
+    timer: 0
+    LandSprite: {fileID: 0}
+  Foods: []
+--- !u!114 &8813677843113518604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8813677843113518607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33c3ad720da00f24785ebe207a847776, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8813677843113518711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8813677843113518607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38374722d7eaff947a021c4f94ccde54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8813677843113518600
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8813677843113518607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de67c52a9863a1c45b33b692a50eb10d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UserSeq: 0
+  ItemSeqs: 
+  FoodSeqs: 
+  ItemValues: 
+  FoodValues: 
+--- !u!114 &8813677843113518601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8813677843113518607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1659d6d4f1882d949b2616183f22c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UserSeq: 0
+  FoodSeqs: 
