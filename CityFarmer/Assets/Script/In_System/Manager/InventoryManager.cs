@@ -50,14 +50,14 @@ public class InventoryManager : MonoBehaviour
             {
 
                 Debug.Log(_inventory.ItemSeqs[inventoryIndex]);
-                Item item = FindBySeq(items, _inventory.ItemSeqs[inventoryIndex]);
+                Item item = InfoManager.Instance.FindBySeq(items, _inventory.ItemSeqs[inventoryIndex]);
                 PlayerItemList.Add(item);
                 PlayerItemValueList.Add(_inventory.ItemValues[inventoryIndex]);
             }
 
             for (int inventoryIndex = 0; inventoryIndex < _inventory.FoodSeqs.Count; inventoryIndex++)
             {
-                Food food = FindBySeq(foods, _inventory.FoodSeqs[inventoryIndex]);
+                Food food = InfoManager.Instance.FindBySeq(foods, _inventory.FoodSeqs[inventoryIndex]);
 
                 PlayerFoodList.Add(food);
                 PlayerFoodValueList.Add(_inventory.FoodValues[inventoryIndex]);
@@ -69,27 +69,5 @@ public class InventoryManager : MonoBehaviour
         }
        
     }
-    public T FindBySeq<T>(List<T> TList,int Seq)
-    {
-        // LINQ를 사용하여 itemSeq와 일치하는 Item 찾기
-        T found = TList.FirstOrDefault(t => TypeSeq(t) == Seq);
-        return found;
-    }
-    public int TypeSeq<T>(T t)
-    {
-       
-        string type = t.ToJson().Split("Name")[0];
-        string typeSeq = "";
-
-        for (int i = 0; i < type.Length; i++)
-        {
-            char ch = type[i];
-            if ('0' <= ch && ch <= '9')
-            {
-                typeSeq += ch;
-            }
-        }
-        return int.Parse(typeSeq);
-    }
-
+ 
 }
