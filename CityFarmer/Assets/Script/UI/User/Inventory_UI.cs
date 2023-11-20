@@ -3,71 +3,76 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.EventSystems;
 public class Inventory_UI : MonoBehaviour
 {
-    public InventoryManager inventory;
-
-
+    public InventoryManager Inventory;
+    public GameObject ItemPanel;
     public Image Itemimage;
     public TMP_Text Values;
-    public TMP_Text itemname;
-    public TMP_Text itemtext;
-    public Button button;
+    public TMP_Text Itemname;
+    public TMP_Text Itemtext;
+    public Button  Button;
     public bool Changes = false; // 농작물, 아이템 보기 바꾸기
-    int Save = 0;
-    void Start()
-    {
+   
     
-
-
-    }
     private void OnEnable()
     {
         ShowButton();
-
-
     }
     public void ShowButton()
     {
-        Transform tr = transform.GetChild(0);
-        for (int i = 0; i < tr.childCount; i++)
+        Transform panel = transform.GetChild(0);
+      
+        for (int childIndex = 0; childIndex < panel.childCount; childIndex++)
         {
-            if (inventory.PlayerFoodList.Count<i)
+            if (Inventory.PlayerFoodList.Count>childIndex)
             {
-                if (tr.GetChild(i).name.Contains("ItemButton"))
+                if (panel.GetChild(childIndex).name.Contains("ItemButton"))
                 {
-                    Transform a = tr.GetChild(i);
-                    a.GetComponent<Image>().sprite = inventory.PlayerFoodList[i].FoodSprite;
-                    a.GetComponent<Text>().text = inventory.PlayerFoodValueList[i].ToString();
-
+                    Transform button = panel.GetChild(childIndex);
+                    Debug.Log(button.name);
+                    button.GetComponent<Image>().sprite = Inventory.PlayerFoodList[childIndex].FoodSprite;
+                    button.GetComponentInChildren<TMP_Text>().text = Inventory.PlayerFoodValueList[childIndex].ToString();
                 }
-
             }
-
-
+            else
+            {
+                break;
+            }
         }
     }
-    // Update is called once per frame
-    void Update()
+    public void InfoFoodClick()
     {
-        
+        int ButtonIndex = 0;
+        GameObject _gameObject = EventSystem.current.currentSelectedGameObject;
+        Transform panel = transform.GetChild(0);
+
+        for (int childIndex = 0; childIndex < panel.childCount; childIndex++)
+        {
+           
+           if (panel.GetChild(childIndex).name.Equals(_gameObject.name))
+           {
+               ButtonIndex = childIndex;
+                Debug.Log(ButtonIndex);
+           }
+          
+        }
+        Itemimage.sprite = Inventory.PlayerFoodList[ButtonIndex].FoodSprite;
+        Itemname.text = Inventory.PlayerFoodList[ButtonIndex].FoodName;
+        Itemtext.text = Inventory.PlayerFoodList[ButtonIndex].FoodText;
+        Values.text = Inventory.PlayerFoodValueList[ButtonIndex].ToString();
+        gameObject.SetActive(false);
+        ItemPanel.SetActive(true);
     }
-    public void infoClick(int Button)
+    public void InfoItemClick(int Button)
     {
-        if (Changes)
-        {
-            Save = Button;
-            Itemimage.sprite = inventory.PlayerItemList[Button].ItemSprite;
-            itemtext.text = inventory.PlayerItemList[Button].ItemText;
-            itemname.text = inventory.PlayerItemList[Button].ItemName;
-        }
-        else
-        {
-            Save = Button;
-            Itemimage.sprite = inventory.PlayerItemList[Button].ItemSprite;
-            itemtext.text = inventory.PlayerItemList[Button].ItemText;
-            itemname.text = inventory.PlayerItemList[Button].ItemName;
-        }
         
+        Itemimage.sprite = Inventory.PlayerFoodList[Button].FoodSprite;
+        Itemname.text = Inventory.PlayerFoodList[Button].FoodName;
+        Itemtext.text = Inventory.PlayerFoodList[Button].FoodText;
+        Values.text = Inventory.PlayerFoodValueList[Button].ToString();
+        gameObject.SetActive(false);
+        ItemPanel.SetActive(true);
     }
 }

@@ -14,8 +14,6 @@ public class UserInfo : MonoBehaviour
 
     public int UserLandLevel { get; set; }
 
-    public Land[] Lands = new Land[9];
-
    
 
 }
