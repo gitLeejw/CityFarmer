@@ -1,31 +1,43 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using MongoDB.Driver;
 using MongoDB.Bson;
-using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
+using UnityEngine;
+
 public class EncyclopediaManager : MonoBehaviour
 {
-    public Mongo MongoDB;
-    public Encyclopedia Encyclopedia;
-    // Start is called before the first frame update
-    void Start()
+    private Mongo _mongoDB;
+    private Encyclopedia _encyclopedia;
+
+    public int CurrentCollectionFoods { get; private set; }
+    public int MaxCollectionFoods { get; private set; }
+
+    private void Awake()
     {
-        MongoDB.MongoDBConnection();
-
-        BsonDocument bson = MongoDB.LoadMongo("Encyclopedia")[0];
-        Encyclopedia encyclopedia = BsonSerializer.Deserialize<Encyclopedia>(bson);
-
-
-
-        Encyclopedia.UserSeq = encyclopedia.UserSeq;
-        Encyclopedia.FoodSeqs = encyclopedia.FoodSeqs;
+        GameObject instance = InfoManager.Instance.gameObject;
+        _encyclopedia = instance.GetComponent<Encyclopedia>();
+        _mongoDB = instance.GetComponent<Mongo>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
-        
+        InitDB();
+        InitFoodCount();
+    }
+
+    private void InitDB()
+    {
+        _mongoDB.MongoDBConnection();
+
+        BsonDocument bson = _mongoDB.LoadMongo("Encyclopedia")[0];
+        Encyclopedia encyclopedia = BsonSerializer.Deserialize<Encyclopedia>(bson);
+
+        _encyclopedia.UserSeq = encyclopedia.UserSeq;
+        _encyclopedia.FoodSeqs = encyclopedia.FoodSeqs;
+    }
+
+    //TODO : 동기화 시 현재 수집 개수 , 최대 수집개수 초기화
+    public void InitFoodCount()
+    {
+        CurrentCollectionFoods = _encyclopedia.FoodSeqs.Count;
+        MaxCollectionFoods = InfoManager.Instance.Foods.Count;
     }
 }
