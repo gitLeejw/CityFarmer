@@ -1,23 +1,17 @@
-using System.Collections;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using System.Collections.Generic;
 using UnityEngine;
-using MongoDB.Driver;
-using MongoDB.Bson;
-using MongoDB.Bson.IO;
-using MongoDB.Bson.Serialization;
-using System.Linq;
-using System.Text.RegularExpressions;
 
 public class InventoryManager : MonoBehaviour
 {
     private Inventory _inventory;
     private Mongo _mongoDB;
-    
     public List<Item> PlayerItemList;
     public List<int> PlayerItemValueList;
     public List<Food> PlayerFoodList;
     public List<int> PlayerFoodValueList;
-    
+
     void Awake()
     {
         GameObject _gameObject = InfoManager.Instance.gameObject;
@@ -25,18 +19,16 @@ public class InventoryManager : MonoBehaviour
         _mongoDB = _gameObject.GetComponent<Mongo>();
         _mongoDB.MongoDBConnection();
         LoadInventory();
-        
     }
 
     public void LoadInventory()
     {
         Debug.Log("Load Inventory Start");
         _inventory.UserSeq = UserInfo.UserSeq;
-        if (_mongoDB.LoadMongo("Inventory").Count >0)
+
+        if (_mongoDB.LoadMongo("Inventory").Count > 0)
         {
-           
             BsonDocument bson = _mongoDB.LoadMongo("Inventory")[0];
-            
             Inventory inventory = BsonSerializer.Deserialize<Inventory>(bson);
             _inventory.UserSeq = inventory.UserSeq;
             _inventory.FoodSeqs = inventory.FoodSeqs;
@@ -49,25 +41,26 @@ public class InventoryManager : MonoBehaviour
             for (int inventoryIndex = 0; inventoryIndex < _inventory.ItemSeqs.Count; inventoryIndex++)
             {
 
-                Debug.Log(_inventory.ItemSeqs[inventoryIndex]);
+
                 Item item = InfoManager.Instance.FindBySeq(items, _inventory.ItemSeqs[inventoryIndex]);
+                item.ItemValue = _inventory.ItemValues[inventoryIndex];
                 PlayerItemList.Add(item);
-                PlayerItemValueList.Add(_inventory.ItemValues[inventoryIndex]);
+
             }
 
             for (int inventoryIndex = 0; inventoryIndex < _inventory.FoodSeqs.Count; inventoryIndex++)
             {
                 Food food = InfoManager.Instance.FindBySeq(foods, _inventory.FoodSeqs[inventoryIndex]);
 
+                food.FoodValue = _inventory.FoodValues[inventoryIndex];
                 PlayerFoodList.Add(food);
-                PlayerFoodValueList.Add(_inventory.FoodValues[inventoryIndex]);
             }
         }
         else
         {
             Mongo.InitMongoInventory(_inventory);
         }
-       
+
     }
- 
+
 }

@@ -23,4 +23,5 @@ public class Food
     {
         return Resources.Load<Sprite>(FoodSpriteString);
     }
+    public int FoodValue { get; set; }
 }

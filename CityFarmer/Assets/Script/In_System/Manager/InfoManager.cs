@@ -13,7 +13,7 @@ public class InfoManager : MonoBehaviour
 {
     public UserInfo UserInfo;
     public Money Money;
-    public Land Land;
+   
     public List<Item> Items = new List<Item>();
     public List<Food> Foods = new List<Food>();
     private static InfoManager _instance;
@@ -219,6 +219,8 @@ public class InfoManager : MonoBehaviour
                 UserInfo.UserReg = node.SelectSingleNode("USER_REG").InnerText;
             }
         }
+        Debug.Log(UserInfo.UserSeq);
+        Maria.SqlConnection.Close();
         if (UserInfo.UserSeq == 0)
         {
             return false;
@@ -227,7 +229,7 @@ public class InfoManager : MonoBehaviour
         {
             return true;
         }
-        Maria.SqlConnection.Close();
+        
     }
 
     public void SignUp(string InfoUserId, string InfoUserPassword, string InfoUserName)

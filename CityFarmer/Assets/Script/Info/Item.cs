@@ -27,4 +27,6 @@ public class Item
     {
         return Resources.Load<Sprite>(ItemSpriteString);
     }
+
+    public int ItemValue { get; set; }
 }
