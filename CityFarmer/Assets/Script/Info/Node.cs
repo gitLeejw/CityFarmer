@@ -39,7 +39,7 @@ public class Node
         return _timer;
     }
     public void SetTimer(int timer)
-    {
+    { 
         _timer = timer;
     }
     public Tile GetStateNodeTile()

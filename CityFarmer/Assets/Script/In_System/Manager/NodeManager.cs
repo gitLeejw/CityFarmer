@@ -1,21 +1,14 @@
-using MySql.Data.MySqlClient;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Xml;
-using UnityEngine;
-using UnityEngine.Tilemaps;
-using MongoDB.Driver;
 using MongoDB.Bson;
-using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
+using System.Collections.Generic;
+using UnityEngine;
 public class NodeManager : MonoBehaviour
 {
     public List<Nodes> Nodes = new List<Nodes>();
     public Nodes ClickNodes;
     private Mongo _mongoDB;
-   
-    
+
+
     void Awake()
     {
         GameObject _gameObject = InfoManager.Instance.gameObject;
@@ -32,13 +25,13 @@ public class NodeManager : MonoBehaviour
     }
     public void nodeClick(int LandSeq)
     {
-        
+
         if (LandSeq < _mongoDB.LoadMongo("Node").Count)
         {
             BsonDocument bson = _mongoDB.LoadMongo("Node")[LandSeq];
             Nodes nodes = BsonSerializer.Deserialize<Nodes>(bson);
             ClickNodes = nodes;
         }
-      
+
     }
 }
