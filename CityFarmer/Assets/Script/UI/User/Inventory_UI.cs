@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
+using System.Linq;
 public class Inventory_UI : MonoBehaviour
 {
     public InventoryManager Inventory;
@@ -12,10 +13,7 @@ public class Inventory_UI : MonoBehaviour
     public TMP_Text Values;
     public TMP_Text Itemname;
     public TMP_Text Itemtext;
-    public Button  Button;
-     // 농작물, 아이템 보기 바꾸기
    
-    
     private void OnEnable()
     {
         ShowButton();
@@ -50,9 +48,8 @@ public class Inventory_UI : MonoBehaviour
                 if (panel.GetChild(childIndex).name.Contains("ItemButton"))
                 {
                     Transform button = panel.GetChild(childIndex);
-                    Debug.Log(button.name);
                     button.GetComponent<Image>().sprite = Inventory.PlayerFoodList[childIndex].FoodSprite;
-                    button.GetComponentInChildren<TMP_Text>().text = Inventory.PlayerFoodValueList[childIndex].ToString();
+                    button.GetComponentInChildren<TMP_Text>().text = Inventory.PlayerFoodList[childIndex].FoodValue.ToString();
                 }
             }
             else
@@ -61,18 +58,28 @@ public class Inventory_UI : MonoBehaviour
             }
         }
         panel = transform.GetChild(1);
+        Inventory.PlayerItemList = Inventory.PlayerItemList.OrderBy(obj => obj.itemtype).ToList();
+        ShowButtonItem(panel, SearchCostumeIndex(Inventory.PlayerItemList),0);
+        panel = transform.GetChild(2);
 
-        for (int childIndex = 0; childIndex < panel.childCount; childIndex++)
+        if(SearchCostumeIndex(Inventory.PlayerItemList) > 0)
+        {
+            ShowButtonItem(panel, Inventory.PlayerItemList.Count , SearchCostumeIndex(Inventory.PlayerItemList));
+        }
+    }
+    void ShowButtonItem(Transform panel, int Count, int StartCount)
+    {
+        int sellCount = 0;
+        for (int childIndex = StartCount; childIndex < Count; childIndex++)
         {
             if (Inventory.PlayerItemList.Count > childIndex)
             {
                 if (panel.GetChild(childIndex).name.Contains("ItemButton"))
                 {
-                    Transform button = panel.GetChild(childIndex);
-                    Debug.Log(button.name);
-                    
+                    Transform button = panel.GetChild(sellCount);
                     button.GetComponent<Image>().sprite = Inventory.PlayerItemList[childIndex].ItemSprite;
-                    button.GetComponentInChildren<TMP_Text>().text = Inventory.PlayerItemValueList[childIndex].ToString();
+                    button.GetComponentInChildren<TMP_Text>().text = Inventory.PlayerItemList[childIndex].ItemValue.ToString();
+                    sellCount++;
                 }
             }
             else
@@ -100,9 +107,23 @@ public class Inventory_UI : MonoBehaviour
         Itemimage.sprite = Inventory.PlayerFoodList[ButtonIndex].FoodSprite;
         Itemname.text = Inventory.PlayerFoodList[ButtonIndex].FoodName;
         Itemtext.text = Inventory.PlayerFoodList[ButtonIndex].FoodText;
-        Values.text = Inventory.PlayerFoodValueList[ButtonIndex].ToString();
+        Values.text = Inventory.PlayerFoodList[ButtonIndex].FoodValue.ToString();
         gameObject.SetActive(false);
         ItemPanel.SetActive(true);
+    }
+    int SearchCostumeIndex(List<Item> items)
+    {
+        int index;
+        for(index = 0; index < items.Count; index++)
+        {
+            if(items[index].itemtype == Item.Itemtype.Costume)
+            {
+                return index;
+            }
+        }
+        return -1;
+
+
     }
     public void InfoItemClick()
     {
@@ -119,13 +140,12 @@ public class Inventory_UI : MonoBehaviour
                 Debug.Log(ButtonIndex);
             }
 
-        }
-            Itemimage.sprite = Inventory.PlayerItemList[ButtonIndex].ItemSprite;
-            Itemname.text = Inventory.PlayerItemList[ButtonIndex].ItemName;
-            Itemtext.text = Inventory.PlayerItemList[ButtonIndex].ItemText;
-            Values.text = Inventory.PlayerItemValueList[ButtonIndex].ToString();
-            gameObject.SetActive(false);
-            ItemPanel.SetActive(true);
-        
+        }            
+        Itemimage.sprite = Inventory.PlayerItemList[ButtonIndex].ItemSprite;
+        Itemname.text = Inventory.PlayerItemList[ButtonIndex].ItemName;
+        Itemtext.text = Inventory.PlayerItemList[ButtonIndex].ItemText;
+        Values.text = Inventory.PlayerItemList[ButtonIndex].ItemValue.ToString();
+        gameObject.SetActive(false);
+        ItemPanel.SetActive(true);
     }
 }

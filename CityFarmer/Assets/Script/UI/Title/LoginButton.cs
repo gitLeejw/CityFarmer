@@ -7,7 +7,6 @@ public class LoginButton : MonoBehaviour
     public GameObject LoginPanel;
     private void Awake()
     {
-       
         _button = GetComponent<Button>();
         _button.onClick.AddListener(() => LoginPanel.SetActive(true));
     }
