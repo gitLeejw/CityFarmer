@@ -1,66 +1,86 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Android; //네임스페이스 추가
 
 public class GPSModule : MonoBehaviour
 {
-    [Header("Setting")]
-    public bool startGPSOnStart; //Start문에서 GPS를 실행할 것인지 여부
-    public float desiredAccuracyInMeters; //현재 위치로부터의 최대 오차를 지정하는 변수 (정확도)
-    public float updateDistanceInMeters; //특정 거리 이상 이동하면 갱신되도록 지정하는 변수 (갱신 빈도)
+    public static double first_Lat; //최초 위도
+    public static double first_Long; //최초 경도
+    public static double current_Lat; //현재 위도
+    public static double current_Long; //현재 경도
 
-    [Header("Cache")]
-    private LocationService locationService; //핵심 클래스
+    private static WaitForSeconds second;
+
+    private static bool gpsStarted = false;
+
+    private static LocationInfo location;
 
     private void Awake()
     {
-        locationService = Input.location; //계속 참조할 것이므로 캐싱
-    }
-    private void Start()
-    {
-        if (startGPSOnStart) //Start문에서 GPS를 실행하고자 하면
-            StartGPS(); //실행
+        second = new WaitForSeconds(1.0f);
     }
 
-    public void StartGPS(string permissionName = null) //GPS를 실행하는 함수
+    IEnumerator Start()
     {
-        if (Permission.HasUserAuthorizedPermission(Permission.FineLocation)) //이미 위치 권한을 획득했으면
+        // 유저가 GPS 사용중인지 최초 체크
+        if (!Input.location.isEnabledByUser)
         {
-            locationService.Start(desiredAccuracyInMeters, updateDistanceInMeters); //서비스 시작
+            Debug.Log("GPS is not enabled");
+            yield break;
         }
-        else //아직 위치 권한을 획득하지 못했으면
+
+        //GPS 서비스 시작
+        Input.location.Start();
+        Debug.Log("Awaiting initialization");
+
+        //활성화될 때 까지 대기
+        int maxWait = 20;
+        while (Input.location.status == LocationServiceStatus.Initializing && maxWait > 0)
         {
-            PermissionCallbacks callbacks = new(); //콜백 함수 생성 후
-            callbacks.PermissionGranted += StartGPS; //현재 함수를 재귀로 들어오도록
-            Permission.RequestUserPermission(Permission.FineLocation, callbacks); //권한 요청 후, 다시 GPS를 시작하도록 함수 실행
+            yield return second;
+            maxWait -= 1;
+        }
+
+        //20초 지날경우 활성화 중단
+        if (maxWait < 1)
+        {
+            Debug.Log("Timed out");
+            yield break;
+        }
+
+        //연결 실패
+        if (Input.location.status == LocationServiceStatus.Failed)
+        {
+            Debug.Log("Unable to determine device location");
+            yield break;
+
+        }
+        else
+        {
+            //접근 허가됨, 최초 위치 정보 받아오기
+            location = Input.location.lastData;
+            first_Lat = location.latitude * 1.0d;
+            first_Long = location.longitude * 1.0d;
+            gpsStarted = true;
+
+            //현재 위치 갱신
+            while (gpsStarted)
+            {
+                location = Input.location.lastData;
+                current_Lat = location.latitude * 1.0d;
+                current_Long = location.longitude * 1.0d;
+                yield return second;
+            }
         }
     }
-    public void StopGPS() //GPS를 정지하는 함수
-    {
-        locationService.Stop(); //서비스 정지
-    }
-    public bool GetLocation(out LocationServiceStatus status, out float latitude, out float longitude, out float altitude) //위치 정보를 얻는 함수
-    {
-        latitude = 0f; //위도
-        longitude = 0f; //경도
-        altitude = 0f; //고도
-        status = locationService.status; //서비스 상태
 
-        if (!locationService.isEnabledByUser) //만약, 사용자가 스마트폰의 GPS 기능을 껐다면
-            return false;
-
-        switch (status)
+    //위치 서비스 종료
+    public static void StopGPS()
+    {
+        if (Input.location.isEnabledByUser)
         {
-            case LocationServiceStatus.Stopped: //GPS를 시작하지 않음
-            case LocationServiceStatus.Failed: //GPS 정보를 가져올 수 없음
-            case LocationServiceStatus.Initializing: //GPS 기능 시작 후 초기화 중
-                return false; //false를 반환해서 정상적으로 정보를 주지 못했음을 알림 (그 원인은 status에 담김)
-
-            default: //GPS 기능이 정상적임 (Running)
-                LocationInfo locationInfo = locationService.lastData; //마지막 GPS 정보를 담고
-                latitude = locationInfo.latitude; //위도 지정
-                longitude = locationInfo.longitude; //경도 지정
-                altitude = locationInfo.altitude; //고도 지정
-                return true; //true를 반환해서 정상적으로 정보를 줬음을 알림
+            gpsStarted = false;
+            Input.location.Stop();
         }
     }
 }
