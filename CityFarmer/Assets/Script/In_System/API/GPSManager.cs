@@ -7,8 +7,7 @@ using UnityEngine.UI;
 public class GPSManager : MonoBehaviour
 {
     public static GPSManager instance;
-    public Text latitude_text;
-    public Text longitude_text;
+   
     public float maxWaitTime = 10.0f;
     public float resendTime = 1.0f;
     public WeatherAPI Weather;
@@ -54,11 +53,10 @@ public class GPSManager : MonoBehaviour
             yield return null;
         }
 #endif
-        Debug.Log("언제들어오냐");
+      
         if (!Input.location.isEnabledByUser)
         {
-            latitude_text.text = "GPS Off";
-            longitude_text.text = "GPS Off";
+         
             yield break;
         }
 
@@ -75,15 +73,13 @@ public class GPSManager : MonoBehaviour
         //수신 실패 시 수신이 실패됐다는 것을 출력
         if (Input.location.status == LocationServiceStatus.Failed)
         {
-            latitude_text.text = "위치 정보 수신 실패";
-            longitude_text.text = "위치 정보 수신 실패";
+        
         }
 
         //응답 대기 시간을 넘어가도록 수신이 없었다면 시간 초과됐음을 출력
         if (waitTime >= maxWaitTime)
         {
-            latitude_text.text = "응답 대기 시간 초과";
-            longitude_text.text = "응답 대기 시간 초과";
+          
         }
 
         //수신된 GPS 데이터를 화면에 출력/
@@ -103,9 +99,6 @@ public class GPSManager : MonoBehaviour
             li = Input.location.lastData;
             latitude = li.latitude;
             longitude = li.longitude;
-
-            latitude_text.text = "위도 : " + latitude.ToString();
-            longitude_text.text = "경도 : " + longitude.ToString();
 
             yield return new WaitForSeconds(resendTime);
         }
