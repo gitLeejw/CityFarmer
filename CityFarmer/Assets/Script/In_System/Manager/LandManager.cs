@@ -5,6 +5,8 @@ using System.Data;
 using System.Xml;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 
 public class LandManager : MonoBehaviour
 {
@@ -12,10 +14,27 @@ public class LandManager : MonoBehaviour
     public Grid grid;
     public List<Vector3Int> Vector3MinPostion;
     public List<Vector3Int> Vector3MaxPostion;
-    public NodeManager NodeManager;
-    public List<Node> Nodes;
+    public Dictionary<Vector3Int, int> Vector3Node = new Dictionary<Vector3Int, int>();
+    public List<Node> NodeList;
+    public List<Nodes> NodesList = new List<Nodes>();
+    public Nodes ClickNodes;
+    private Mongo _mongoDB;
+    public int LandSeq;
+    public GameObject _nodePopUp;
+    public bool OnNodePopUp = true;
     private void Awake()
     {
+        GameObject _gameObject = InfoManager.Instance.gameObject;
+        
+        _mongoDB = _gameObject.GetComponent<Mongo>();
+        _mongoDB.MongoDBConnection();
+
+        for (int i = 0; i < _mongoDB.LoadMongo("Node").Count; i++)
+        {
+            BsonDocument bson = _mongoDB.LoadMongo("Node")[i];
+            Nodes nodes = BsonSerializer.Deserialize<Nodes>(bson);
+            NodesList.Add(nodes);
+        }
         // 재배 가능 영역 불러오기
         for (int i = 0; i < 8; i++)
         {
@@ -26,16 +45,36 @@ public class LandManager : MonoBehaviour
         }
    
     }
+    
     private void Start()
     {
         LoadLand();
 
     }
+    private void Update()
+    {
+        Vector3Int mousePos = GetMousePosition();
+        if (Input.GetMouseButton(0))
+        {
+            if (Vector3Node.ContainsKey(mousePos)&&OnNodePopUp)
+            {
+                LandSeq = Vector3Node[mousePos];
+                _nodePopUp.SetActive(true);
+                OnNodePopUp = false;
 
+            }
+
+        }
+    }
+    public Vector3Int GetMousePosition()
+    {
+        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        return grid.WorldToCell(mouseWorldPos);
+    }
     public void LoadLand()
     {
       
-        for (int currentland = 0; currentland < NodeManager.Nodes.Count; currentland++)
+        for (int currentland = 0; currentland < NodesList.Count; currentland++)
         {
             coordinate(currentland);
         }
@@ -60,10 +99,12 @@ public class LandManager : MonoBehaviour
         }
         for (int tileCount = 0; tileCount< vector3s.Count; tileCount++)
         {
-            Node node = new Node(vector3s[tileCount], NodeManager.Nodes[land].Lands[tileCount][0], NodeManager.Nodes[land].Lands[tileCount][1]);
-            node.State = (Node.NodeState)NodeManager.Nodes[land].Lands[tileCount][2];
+            Node node = new Node(vector3s[tileCount], NodesList[land].Lands[tileCount][0], NodesList[land].Lands[tileCount][1]);
+            node.State = (Node.NodeState)NodesList[land].Lands[tileCount][2];
             node.SetNodeTile();
-            Nodes.Add(node);
+            NodeList.Add(node);
+           
+            Vector3Node.Add(node.GetPosition(), land);
             Tilemap.SetTile(node.GetPosition(), node.GetStateNodeTile()); // 타일 변경
         }
     }
