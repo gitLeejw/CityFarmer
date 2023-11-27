@@ -1,10 +1,9 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
-using UnityEngine.EventSystems;
 using System.Linq;
+using TMPro;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 public class Inventory_UI : MonoBehaviour
 {
     public InventoryManager Inventory;
@@ -58,7 +57,7 @@ public class Inventory_UI : MonoBehaviour
             }
         }
         panel = transform.GetChild(1);
-        Inventory.PlayerItemList = Inventory.PlayerItemList.OrderBy(obj => obj.itemtype).ToList();
+        Inventory.PlayerItemList = Inventory.PlayerItemList.OrderBy(obj => obj.itemType).ToList();
         ShowButtonItem(panel, SearchCostumeIndex(Inventory.PlayerItemList),0);
         panel = transform.GetChild(2);
 
@@ -116,7 +115,7 @@ public class Inventory_UI : MonoBehaviour
         int index;
         for(index = 0; index < items.Count; index++)
         {
-            if(items[index].itemtype == Item.Itemtype.Costume)
+            if(items[index].itemType == Item.ItemType.Costume)
             {
                 return index;
             }

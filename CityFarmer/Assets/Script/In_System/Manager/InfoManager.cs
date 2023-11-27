@@ -1,11 +1,10 @@
+using MongoDB.Bson;
 using MySql.Data.MySqlClient;
-using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Xml;
 using UnityEngine;
-using System.Linq;
-using MongoDB.Bson;
 
 
 
@@ -13,7 +12,7 @@ public class InfoManager : MonoBehaviour
 {
     public UserInfo UserInfo;
     public Money Money;
-   
+    public List<Shop> Shops = new List<Shop>();
     public List<Item> Items = new List<Item>();
     public List<Food> Foods = new List<Food>();
     private static InfoManager _instance;
@@ -99,8 +98,46 @@ public class InfoManager : MonoBehaviour
         return int.Parse(typeSeq);
     }
 
+    public void LoadShop()
+    {
+        StartSQL();
+        Shops.Clear();
+        XmlDocument xmlDocument = InfoManager.Instance.OnLoadData("SHOP");
 
-    private XmlDocument OnLoadData(string DB)
+        if (xmlDocument != null)
+        {
+            XmlNodeList data = xmlDocument.SelectNodes("NewDataSet/SHOP");
+
+
+            foreach (XmlNode node in data)
+            {
+
+                Shop shop = new Shop();
+                shop.ShopSeq = System.Convert.ToInt32(node.SelectSingleNode("SHOP_SEQ").InnerText);
+               
+                shop.ShopText = node.SelectSingleNode("SHOP_TEXT").InnerText;
+                shop.ShopPrice = System.Convert.ToInt32(node.SelectSingleNode("SHOP_PRICE").InnerText);
+
+              
+                
+                
+                shop.ShopSpriteString = node.SelectSingleNode("SHOP_SPRITE").InnerText;
+                shop.ShopSprite = shop.shopSprite();
+
+                string type = node.SelectSingleNode("SHOP_TYPE").InnerText;
+                switch (type)
+                {
+                    case "Land": shop.shopType = Shop.ShopType.Land; break;
+                    case "Money": shop.shopType = Shop.ShopType.Money; break;
+                    case "Item": shop.shopType = Shop.ShopType.Item; break;
+                    case "Other": shop.shopType = Shop.ShopType.Other; break;
+                }
+                Shops.Add(shop);
+            }
+        }
+        Maria.SqlConnection.Close();
+    }
+    public XmlDocument OnLoadData(string DB)
     {
         StartSQL();
         string query = "SELECT * FROM " + DB;
@@ -109,7 +146,7 @@ public class InfoManager : MonoBehaviour
         xmlDocument.LoadXml(dataSet.GetXml());
         return xmlDocument;
     }
-    private void StartSQL()
+    public void StartSQL()
     {
         try
         {
@@ -182,8 +219,8 @@ public class InfoManager : MonoBehaviour
 
                 switch (type)
                 {
-                    case "disposable": item.itemtype = Item.Itemtype.Disposable; break;
-                    case "costume": item.itemtype = Item.Itemtype.Costume; break;
+                    case "disposable": item.itemType = Item.ItemType.Disposable; break;
+                    case "costume": item.itemType = Item.ItemType.Costume; break;
 
                 }
 

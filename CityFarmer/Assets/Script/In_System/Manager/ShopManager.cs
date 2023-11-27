@@ -1,9 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class Shop : MonoBehaviour
+using System.Data;
+using System.Linq;
+using System.Xml;
+public class ShopManager : MonoBehaviour
 {
+    public int ShopGold;
+    public int ShopRuby;
+
     // Start is called before the first frame update
     void Start()
     {

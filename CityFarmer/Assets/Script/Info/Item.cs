@@ -11,12 +11,12 @@ public class Item
     public string ItemName { get; set; }
     public string ItemText { get; set; }
     public int ItemPrice { get; set; }
-    public enum Itemtype
+    public enum ItemType
     {
         Disposable,
         Costume
     }
-    public Itemtype itemtype { get; set; }
+    public ItemType itemType { get; set; }
 
     public bool ItemMoney { get; set; }
 

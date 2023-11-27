@@ -61,6 +61,7 @@ public class LoginPanel : MonoBehaviour
             InfoManager.Instance.LoadFood();
             InfoManager.Instance.LoadItem();
             InfoManager.Instance.LoadMoney();
+            InfoManager.Instance.LoadShop();
             gameObject.SetActive(false);
         }
     }
