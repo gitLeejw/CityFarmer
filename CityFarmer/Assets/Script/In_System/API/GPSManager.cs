@@ -6,25 +6,27 @@ using UnityEngine.UI;
 
 public class GPSManager : MonoBehaviour
 {
-    public static GPSManager instance;
+    public static GPSManager Instance;
    
-    public float maxWaitTime = 10.0f;
-    public float resendTime = 1.0f;
+    private float _maxWaitTime = 10.0f;
+    private float _resendTime = 1.0f;
     public WeatherAPI Weather;
     //위도 경도 변경
-    public float latitude = 0;
-    public float longitude = 0;
-    float waitTime = 0;
+    private float _latitude = 0;
+    private float _longitude = 0;
+    private float _waitTime = 0;
 
-    public bool receiveGPS = false;
+    private bool _receiveGPS = false;
 
     private void Awake()
     {
-        if (instance == null)
+        if (Instance == null)
         {
-            instance = this;
+            Instance = this;
         }
     }
+
+    [System.Obsolete]
     void Start()
     {
         StartCoroutine(GPS_On());
@@ -64,10 +66,10 @@ public class GPSManager : MonoBehaviour
         Input.location.Start();
 
         //GPS 수신 상태가 초기 상태에서 일정 시간 동안 대기함
-        while (Input.location.status == LocationServiceStatus.Initializing && waitTime < maxWaitTime)
+        while (Input.location.status == LocationServiceStatus.Initializing && _waitTime < _maxWaitTime)
         {
             yield return new WaitForSeconds(1.0f);
-            waitTime++;
+            _waitTime++;
         }
 
         //수신 실패 시 수신이 실패됐다는 것을 출력
@@ -77,7 +79,7 @@ public class GPSManager : MonoBehaviour
         }
 
         //응답 대기 시간을 넘어가도록 수신이 없었다면 시간 초과됐음을 출력
-        if (waitTime >= maxWaitTime)
+        if (_waitTime >= _maxWaitTime)
         {
           
         }
@@ -91,16 +93,16 @@ public class GPSManager : MonoBehaviour
        longitude_text.text = "경도 : " + longitude.ToString();
        */
         //위치 정보 수신 시작 체크
-        receiveGPS = true;
-        Weather.CheckCityWeather(latitude, longitude);
+        _receiveGPS = true;
+        Weather.CheckCityWeather(_latitude, _longitude);
         //위치 데이터 수신 시작 이후 resendTime 경과마다 위치 정보를 갱신하고 출력
-        while (receiveGPS)
+        while (_receiveGPS)
         {
             li = Input.location.lastData;
-            latitude = li.latitude;
-            longitude = li.longitude;
+            _latitude = li.latitude;
+            _longitude = li.longitude;
 
-            yield return new WaitForSeconds(resendTime);
+            yield return new WaitForSeconds(_resendTime);
         }
       
         

@@ -5,17 +5,10 @@ using UnityEngine;
 using UnityEngine.Networking;
 public class WeatherAPI : MonoBehaviour
 {
-    //API аж╪р
-    //===============================================
-    public string APP_ID;
-   
-    public WeatherData weatherInfo;
+    public WeatherData WeatherInfo;
 
     // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+   
 
     public void CheckCityWeather(float lat,float lon)
     {
@@ -23,10 +16,7 @@ public class WeatherAPI : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-
-    }
+ 
 
     IEnumerator GetWeather(float lat, float lon)
     {
@@ -38,9 +28,9 @@ public class WeatherAPI : MonoBehaviour
 
         string json = www.downloadHandler.text;
         json = json.Replace("\"base\":", "\"basem\":");
-        weatherInfo = JsonUtility.FromJson<WeatherData>(json);
+        WeatherInfo = JsonUtility.FromJson<WeatherData>(json);
 
-        Debug.Log(weatherInfo.weather[0].main);
+        Debug.Log(WeatherInfo.weather[0].main);
 
     }
 }
