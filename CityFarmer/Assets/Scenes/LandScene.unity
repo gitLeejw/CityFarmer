@@ -6939,7 +6939,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Land: {fileID: 277702370}
-  timer: {fileID: 461434347722181795, guid: db33b230a62275c4db7b41029a770a3b, type: 3}
+  Timer: {fileID: 461434347722181795, guid: db33b230a62275c4db7b41029a770a3b, type: 3}
   CanvesTr: {fileID: 1539895963}
 --- !u!1 &392974995
 GameObject:

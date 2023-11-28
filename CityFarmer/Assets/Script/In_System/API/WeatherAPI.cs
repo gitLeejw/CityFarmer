@@ -4,7 +4,7 @@ using UnityEngine.Networking;
 public class WeatherAPI : MonoBehaviour
 {
     public WeatherData WeatherInfo;
-
+    public string url = "";
     // Start is called before the first frame update
 
 
@@ -19,7 +19,7 @@ public class WeatherAPI : MonoBehaviour
     IEnumerator GetWeather(float lat, float lon)
     {
 
-        string url = "https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&appid=6a8b8513981cf2cdf692039790b9f16f";
+        url = "https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&appid=6a8b8513981cf2cdf692039790b9f16f";
 
         UnityWebRequest www = UnityWebRequest.Get(url);
         yield return www.SendWebRequest();

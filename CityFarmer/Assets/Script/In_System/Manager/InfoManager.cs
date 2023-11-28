@@ -102,25 +102,19 @@ public class InfoManager : MonoBehaviour
     {
         StartSQL();
         Shops.Clear();
-        XmlDocument xmlDocument = InfoManager.Instance.OnLoadData("SHOP");
+        XmlDocument xmlDocument = Instance.OnLoadData("SHOP");
 
         if (xmlDocument != null)
         {
             XmlNodeList data = xmlDocument.SelectNodes("NewDataSet/SHOP");
 
-
             foreach (XmlNode node in data)
             {
-
                 Shop shop = new Shop();
                 shop.ShopSeq = System.Convert.ToInt32(node.SelectSingleNode("SHOP_SEQ").InnerText);
-               
                 shop.ShopText = node.SelectSingleNode("SHOP_TEXT").InnerText;
                 shop.ShopPrice = System.Convert.ToInt32(node.SelectSingleNode("SHOP_PRICE").InnerText);
-
-              
-                
-                
+                shop.ShopLevel = System.Convert.ToInt32(node.SelectSingleNode("SHOP_LEVEL").InnerText);
                 shop.ShopSpriteString = node.SelectSingleNode("SHOP_SPRITE").InnerText;
                 shop.ShopSprite = shop.shopSprite();
 

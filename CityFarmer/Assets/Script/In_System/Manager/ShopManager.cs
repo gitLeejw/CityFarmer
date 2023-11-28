@@ -4,20 +4,31 @@ using UnityEngine;
 using System.Data;
 using System.Linq;
 using System.Xml;
+
 public class ShopManager : MonoBehaviour
 {
-    public int ShopGold;
-    public int ShopRuby;
+    public void SellFood(int foodSeq, int value)
+    {
 
-    // Start is called before the first frame update
-    void Start()
+    }
+    public void BuyItem(Shop shop)
+    {
+
+    }
+    public void BuyRuby(Shop shop)
+    {
+
+    }
+    public void BuyMoney(Shop shop)
+    {
+
+    }
+    public void BuyLand(Shop shop)
     {
         
     }
-
-    // Update is called once per frame
-    void Update()
+    public void BuyOther(Shop shop)
     {
-        
+
     }
 }
