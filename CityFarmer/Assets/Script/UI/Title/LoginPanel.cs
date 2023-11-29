@@ -68,7 +68,7 @@ public class LoginPanel : MonoBehaviour
     private void Sign()
     {
         InfoManager.Instance.SignUp(IdInputField.text, PassWordInputField.text,NameInputField.text);
-        InfoManager.Instance.InsertMoney();
+        InfoManager.Instance.InsertSQL(InfoManager.Instance.MoneyInsertQuery);
         Login();
     }
 }

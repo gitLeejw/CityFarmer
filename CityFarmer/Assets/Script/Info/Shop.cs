@@ -20,7 +20,8 @@ public class Shop
     public ShopType shopType { get; set; }
 
     public bool ShopMoney { get; set; }
-
+    public int ShopValue { get; set; }
+    public int ItemSeq { get; set; }
     public string ShopSpriteString { get; set; }
     public Sprite ShopSprite { get; set; }
 
@@ -29,6 +30,6 @@ public class Shop
         return Resources.Load<Sprite>(ShopSpriteString);
     }
 
-    public int ShopValue { get; set; }
+    
 }
 

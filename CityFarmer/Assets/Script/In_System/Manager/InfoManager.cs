@@ -15,6 +15,9 @@ public class InfoManager : MonoBehaviour
     public List<Shop> Shops = new List<Shop>();
     public List<Item> Items = new List<Item>();
     public List<Food> Foods = new List<Food>();
+    public string MoneyUpdateQuery = "";
+    public string MoneyInsertQuery = "";
+    public string UserUpdateQuery = "";
     private static InfoManager _instance;
     // 인스턴스에 접근하기 위한 프로퍼티
     public static InfoManager Instance
@@ -47,10 +50,23 @@ public class InfoManager : MonoBehaviour
         // 아래의 함수를 사용하여 씬이 전환되더라도 선언되었던 인스턴스가 파괴되지 않는다.
         DontDestroyOnLoad(gameObject);
     }
-    public void InsertMoney()
+    private void Start()
+    {
+        MoneyUpdateQuery = "UPDATE MONEY SET MONEY_GOLD='" + Money.moneyGold + "',MONEY_RUBY = '" + Money.moneyRuby + "' WHERE = '"+ UserInfo.UserSeq + "'";
+        MoneyInsertQuery = "INSERT INTO MONEY ( USER_SEQ, MONEY_GOLD,MONEY_RUBY )VALUES('" + UserInfo.UserSeq + "',0,0)";
+        UserUpdateQuery = "UPDATE USER SET USER_LANDLEVEL = '"+UserInfo.UserLandLevel+"', USER_LEVEL = '"+UserInfo.UserLevel+"', USER_EXP = '"+UserInfo.UserExp+ "' WHERE = '"+ UserInfo.UserSeq + "' ";
+    }
+    public void UpdateSQL(string query)
     {
         StartSQL();
-        string query = "INSERT INTO MONEY ( USER_SEQ, MONEY_GOLD,MONEY_RUBY )VALUES('"+UserInfo.UserSeq+"',0,0)";
+
+        Maria.OnInsertOrUpdateRequest(query);
+        Maria.SqlConnection.Close();
+    }
+    public void InsertSQL(string query)
+    {
+        StartSQL();
+        
 
         Maria.OnInsertOrUpdateRequest(query);
         Maria.SqlConnection.Close();
@@ -117,7 +133,8 @@ public class InfoManager : MonoBehaviour
                 shop.ShopLevel = System.Convert.ToInt32(node.SelectSingleNode("SHOP_LEVEL").InnerText);
                 shop.ShopSpriteString = node.SelectSingleNode("SHOP_SPRITE").InnerText;
                 shop.ShopSprite = shop.shopSprite();
-
+                shop.ShopValue = System.Convert.ToInt32(node.SelectSingleNode("SHOP_VALUE").InnerText);
+                shop.ItemSeq = System.Convert.ToInt32(node.SelectSingleNode("ITEM_SEQ").InnerText);
                 string type = node.SelectSingleNode("SHOP_TYPE").InnerText;
                 switch (type)
                 {
