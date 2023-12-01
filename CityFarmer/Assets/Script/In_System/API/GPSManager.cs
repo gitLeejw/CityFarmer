@@ -51,7 +51,7 @@ public class GPSManager : MonoBehaviour
     }
 
 
-    void Start()
+    private void Start()
     {
         StartCoroutine(GPS_On());
     }

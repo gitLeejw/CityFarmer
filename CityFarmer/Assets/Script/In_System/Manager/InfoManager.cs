@@ -50,11 +50,20 @@ public class InfoManager : MonoBehaviour
         // 아래의 함수를 사용하여 씬이 전환되더라도 선언되었던 인스턴스가 파괴되지 않는다.
         DontDestroyOnLoad(gameObject);
     }
-    private void Start()
+    public string MoneyUpdateString()
     {
-        MoneyUpdateQuery = "UPDATE MONEY SET MONEY_GOLD='" + Money.moneyGold + "',MONEY_RUBY = '" + Money.moneyRuby + "' WHERE = '"+ UserInfo.UserSeq + "'";
+        MoneyUpdateQuery = "UPDATE MONEY SET MONEY_GOLD = '" + Money.moneyGold + "', MONEY_RUBY = '" + Money.moneyRuby + "' WHERE USER_SEQ = '" + UserInfo.UserSeq + "';";
+        return MoneyUpdateQuery;
+    }
+    public string MoneyInsertString()
+    {
         MoneyInsertQuery = "INSERT INTO MONEY ( USER_SEQ, MONEY_GOLD,MONEY_RUBY )VALUES('" + UserInfo.UserSeq + "',0,0)";
-        UserUpdateQuery = "UPDATE USER SET USER_LANDLEVEL = '"+UserInfo.UserLandLevel+"', USER_LEVEL = '"+UserInfo.UserLevel+"', USER_EXP = '"+UserInfo.UserExp+ "' WHERE = '"+ UserInfo.UserSeq + "' ";
+        return MoneyInsertQuery;
+    }
+    public string UserUpdateString()
+    {
+        UserUpdateQuery = "UPDATE USER SET USER_LANDLEVEL = '" + UserInfo.UserLandLevel + "', USER_LEVEL = '" + UserInfo.UserLevel + "', USER_EXP = '" + UserInfo.UserExp + "' WHERE USER_SEQ ='" + UserInfo.UserSeq + "';";
+        return UserUpdateQuery;
     }
     public void UpdateSQL(string query)
     {
@@ -128,7 +137,7 @@ public class InfoManager : MonoBehaviour
             {
                 Shop shop = new Shop();
                 shop.ShopSeq = System.Convert.ToInt32(node.SelectSingleNode("SHOP_SEQ").InnerText);
-                shop.ShopText = node.SelectSingleNode("SHOP_TEXT").InnerText;
+                shop.ShopName = node.SelectSingleNode("SHOP_NAME").InnerText;
                 shop.ShopPrice = System.Convert.ToInt32(node.SelectSingleNode("SHOP_PRICE").InnerText);
                 shop.ShopLevel = System.Convert.ToInt32(node.SelectSingleNode("SHOP_LEVEL").InnerText);
                 shop.ShopSpriteString = node.SelectSingleNode("SHOP_SPRITE").InnerText;

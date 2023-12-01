@@ -5,16 +5,10 @@ public class WeatherAPI : MonoBehaviour
 {
     public WeatherData WeatherInfo;
     public string url = "";
-    // Start is called before the first frame update
-
-
     public void CheckCityWeather(float lat, float lon)
     {
         StartCoroutine(GetWeather(lat, lon));
     }
-
-    // Update is called once per frame
-
 
     IEnumerator GetWeather(float lat, float lon)
     {
