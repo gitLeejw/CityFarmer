@@ -1,18 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using MongoDB.Driver;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
-using System.Reflection;
-using System.Threading.Tasks;
+using MongoDB.Driver;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class Mongo : MonoBehaviour
 {
     public static MongoClient client;
-   public static IMongoDatabase database;
- 
+    public static IMongoDatabase database;
+
     public void MongoDBConnection()
     {
         string connectionString = "mongodb+srv://myUser:dnflskfk1@mydb.qgumh09.mongodb.net/MyDB?retryWrites=true&appName=AtlasApp";
@@ -23,7 +20,7 @@ public class Mongo : MonoBehaviour
     }
 
     // 여기에서 쿼리 실행 등 MongoDB 작업 수행
-    public  List<BsonDocument> LoadMongo(string DB)
+    public List<BsonDocument> LoadMongo(string DB)
     {
         IMongoCollection<BsonDocument> collection = database.GetCollection<BsonDocument>(DB);
         var filter = Builders<BsonDocument>.Filter.Eq("UserSeq", UserInfo.UserSeq);
@@ -47,10 +44,30 @@ public class Mongo : MonoBehaviour
 
         var collection = database.GetCollection<BsonDocument>(encyclopedia.GetType().Name);
 
-        var document = new BsonDocument { { "UserSeq", encyclopedia.UserSeq }, {"FoodSeqs",new BsonArray(encyclopedia.FoodSeqs ) }};
+        var document = new BsonDocument { { "UserSeq", encyclopedia.UserSeq }, { "FoodSeqs", new BsonArray(encyclopedia.FoodSeqs) } };
+        collection.InsertOneAsync(document);
+
+    }
+    public static void InitMongoNodes()
+    {
+        Debug.Log("Start InitMongoNodes");
+
+        var collection = database.GetCollection<BsonDocument>("Node");
+        List<List<int>> Lands = new List<List<int>>();
+
+        for (int nodeIndex = 0; nodeIndex < 9; nodeIndex++)
+        {
+            List<int> node = new List<int>();
+            for (int resetIndex = 0; resetIndex < 3; resetIndex++)
+            {
+                node.Add(0);
+            }
+            Lands.Add(node);
+        }
+        var document = new BsonDocument { { "UserSeq", UserInfo.UserSeq }, { "LandSeq", InfoManager.Instance.UserInfo.UserLandLevel }, { "Lands", new BsonArray(Lands) } };
         collection.InsertOneAsync(document);
     }
-    public void UpdateMongo<T>(Inventory inventory,Encyclopedia encyclopedia,T type)
+    public static void UpdateMongo<T>(Inventory inventory, Encyclopedia encyclopedia, T type)
     {
         string typetext = type.GetType().ToString();
         IMongoCollection<BsonDocument> collection = database.GetCollection<BsonDocument>(typetext);
@@ -69,14 +86,29 @@ public class Mongo : MonoBehaviour
                 var inventoryItemValueResult = collection.UpdateOne(filter, InventoryItemValueupdate);
                 var inventoryFoodValueResult = collection.UpdateOne(filter, InventoryFoodValueupdate); break;
             case "Encyclopedia":
-                var EncyclopediaFoodupdate = Builders<BsonDocument>.Update.Set("FoodSeqs", encyclopedia.FoodSeqs);            
+                var EncyclopediaFoodupdate = Builders<BsonDocument>.Update.Set("FoodSeqs", encyclopedia.FoodSeqs);
                 var EncyclopediaFoodresult = collection.UpdateOne(filter, EncyclopediaFoodupdate);
                 break;
         }
-          
+
         Debug.Log("Data Update successfully!");
     }
-    public  BsonDocument JsonToBson(string jsonString)
+    public static void UpdateMongoNodes(Nodes node)
+    {
+        Debug.Log(node.Lands[3][0]);
+        IMongoCollection<BsonDocument> collection = database.GetCollection<BsonDocument>("Node");
+        var builder = Builders<BsonDocument>.Filter;
+        var filter = builder.Eq("UserSeq", UserInfo.UserSeq) & builder.Eq("LandSeq", node.LandSeq);
+        var LandUpdate = Builders<BsonDocument>.Update.Set("Lands", node.Lands);
+
+        // 데이터 저장
+        var LandResult = collection.UpdateOne(filter, LandUpdate);
+
+
+        Debug.Log("Data Update successfully!");
+    }
+
+    public BsonDocument JsonToBson(string jsonString)
     {
         // JSON 문자열을 BsonDocument로 변환
         using (JsonReader reader = new JsonReader(jsonString))

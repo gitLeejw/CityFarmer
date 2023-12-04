@@ -1,22 +1,57 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
-using UnityEngine.EventSystems;
-using System.Linq;
+using UnityEngine;
+using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 public class Node_UI : MonoBehaviour
 {
-    public NodeManager Node;
-    public List<List<int>> NodeData;
+
+    public LandManager LandManager;
+    private int _nodeLength;
+    private List<Transform> _transforms;
+    private float[] _deltaTime = new float[9];
+
+
     private void OnEnable()
     {
-        OnClickLand(0);
+
+        _nodeLength = LandManager.NodeList.Count;
+        _transforms = new List<Transform>();
+        for (int childIndex = 0; childIndex < transform.childCount; childIndex++)
+        {
+            _transforms.Add(transform.GetChild(childIndex));
+        }
+
+        ShowButton(LandManager.LandSeq);
     }
-    public void OnClickLand(int LandSeq)
+    public void ShowButton(int LandSeq)
     {
-        Node.nodeClick(LandSeq);
-        NodeData = Node.ClickNodes.Lands;
-        Debug.Log(NodeData[2][1]);
+
+        for (int nodeIndex = 0; nodeIndex < _nodeLength; nodeIndex++)
+        {
+            Node node = LandManager.NodeList[LandSeq * 9 + nodeIndex];
+            int foodSeq = node.GetFoodSeq();
+            _deltaTime[nodeIndex] = node.GetTimer();
+            Tile tile = node.GetStateNodeTile();
+            Debug.Log(_transforms[nodeIndex].name);
+            _transforms[nodeIndex].GetComponent<Image>().sprite = tile.sprite;
+
+        }
+
     }
+    private void Update()
+    {
+        for (int i = 0; i < 9; i++)
+        {
+            if (_deltaTime[i] > 0)
+            {
+                _deltaTime[i] -= Time.deltaTime;
+            }
+
+            _transforms[i].GetComponentInChildren<TextMeshProUGUI>().text = LandManager.ConvertString((int)_deltaTime[i]);
+        }
+
+    }
+
+
 }

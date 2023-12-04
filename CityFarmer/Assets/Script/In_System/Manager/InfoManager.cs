@@ -1,11 +1,10 @@
+using MongoDB.Bson;
 using MySql.Data.MySqlClient;
-using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Xml;
 using UnityEngine;
-using System.Linq;
-using MongoDB.Bson;
 
 
 
@@ -14,15 +13,19 @@ public class InfoManager : MonoBehaviour
     public UserInfo UserInfo;
     public Money Money;
 
+    public List<Shop> Shops = new List<Shop>();
     public List<Item> Items = new List<Item>();
     public List<Food> Foods = new List<Food>();
+    public string MoneyUpdateQuery = "";
+    public string MoneyInsertQuery = "";
+    public string UserUpdateQuery = "";
     private static InfoManager _instance;
-    // ÀÎ½ºÅÏ½º¿¡ Á¢±ÙÇÏ±â À§ÇÑ ÇÁ·ÎÆÛÆ¼
+    // ì¸ìŠ¤í„´ìŠ¤ì— ì ‘ê·¼í•˜ê¸° ìœ„í•œ í”„ë¡œí¼í‹°
     public static InfoManager Instance
     {
         get
         {
-            // ÀÎ½ºÅÏ½º°¡ ¾ø´Â °æ¿ì¿¡ Á¢±ÙÇÏ·Á ÇÏ¸é ÀÎ½ºÅÏ½º¸¦ ÇÒ´çÇØÁØ´Ù.
+            // ì¸ìŠ¤í„´ìŠ¤ê°€ ì—†ëŠ” ê²½ìš°ì— ì ‘ê·¼í•˜ë ¤ í•˜ë©´ ì¸ìŠ¤í„´ìŠ¤ë¥¼ í• ë‹¹í•´ì¤€ë‹¤.
             if (!_instance)
             {
                 _instance = FindObjectOfType(typeof(InfoManager)) as InfoManager;
@@ -47,18 +50,39 @@ public class InfoManager : MonoBehaviour
         {
             _instance = this;
         }
-        // ÀÎ½ºÅÏ½º°¡ Á¸ÀçÇÏ´Â °æ¿ì »õ·Î»ı±â´Â ÀÎ½ºÅÏ½º¸¦ »èÁ¦ÇÑ´Ù.
+        // ì¸ìŠ¤í„´ìŠ¤ê°€ ì¡´ì¬í•˜ëŠ” ê²½ìš° ìƒˆë¡œìƒê¸°ëŠ” ì¸ìŠ¤í„´ìŠ¤ë¥¼ ì‚­ì œí•œë‹¤.
         else if (_instance != this)
         {
             Destroy(gameObject);
         }
-        // ¾Æ·¡ÀÇ ÇÔ¼ö¸¦ »ç¿ëÇÏ¿© ¾ÀÀÌ ÀüÈ¯µÇ´õ¶óµµ ¼±¾ğµÇ¾ú´ø ÀÎ½ºÅÏ½º°¡ ÆÄ±«µÇÁö ¾Ê´Â´Ù.
+        // ì•„ë˜ì˜ í•¨ìˆ˜ë¥¼ ì‚¬ìš©í•˜ì—¬ ì”¬ì´ ì „í™˜ë˜ë”ë¼ë„ ì„ ì–¸ë˜ì—ˆë˜ ì¸ìŠ¤í„´ìŠ¤ê°€ íŒŒê´´ë˜ì§€ ì•ŠëŠ”ë‹¤.
         DontDestroyOnLoad(gameObject);
     }
-    public void InsertMoney()
+    public string MoneyUpdateString()
+    {
+        MoneyUpdateQuery = "UPDATE MONEY SET MONEY_GOLD = '" + Money.moneyGold + "', MONEY_RUBY = '" + Money.moneyRuby + "' WHERE USER_SEQ = '" + UserInfo.UserSeq + "';";
+        return MoneyUpdateQuery;
+    }
+    public string MoneyInsertString()
+    {
+        MoneyInsertQuery = "INSERT INTO MONEY ( USER_SEQ, MONEY_GOLD,MONEY_RUBY )VALUES('" + UserInfo.UserSeq + "',0,0)";
+        return MoneyInsertQuery;
+    }
+    public string UserUpdateString()
+    {
+        UserUpdateQuery = "UPDATE USER SET USER_LANDLEVEL = '" + UserInfo.UserLandLevel + "', USER_LEVEL = '" + UserInfo.UserLevel + "', USER_EXP = '" + UserInfo.UserExp + "' WHERE USER_SEQ ='" + UserInfo.UserSeq + "';";
+        return UserUpdateQuery;
+    }
+    public void UpdateSQL(string query)
     {
         StartSQL();
-        string query = "INSERT INTO MONEY ( USER_SEQ, MONEY_GOLD,MONEY_RUBY )VALUES('" + UserInfo.UserSeq + "',0,0)";
+
+        Maria.OnInsertOrUpdateRequest(query);
+        Maria.SqlConnection.Close();
+    }
+    public void InsertSQL(string query)
+    {
+        StartSQL();
 
         Maria.OnInsertOrUpdateRequest(query);
         Maria.SqlConnection.Close();
@@ -85,7 +109,7 @@ public class InfoManager : MonoBehaviour
     }
     public T FindBySeq<T>(List<T> TList, int Seq)
     {
-        // LINQ¸¦ »ç¿ëÇÏ¿© itemSeq¿Í ÀÏÄ¡ÇÏ´Â Item Ã£±â
+        // LINQë¥¼ ì‚¬ìš©í•˜ì—¬ itemSeqì™€ ì¼ì¹˜í•˜ëŠ” Item ì°¾ê¸°
         T found = TList.FirstOrDefault(t => TypeSeq(t) == Seq);
         return found;
     }
@@ -106,8 +130,41 @@ public class InfoManager : MonoBehaviour
         return int.Parse(typeSeq);
     }
 
+    public void LoadShop()
+    {
+        StartSQL();
+        Shops.Clear();
+        XmlDocument xmlDocument = Instance.OnLoadData("SHOP");
 
-    private XmlDocument OnLoadData(string DB)
+        if (xmlDocument != null)
+        {
+            XmlNodeList data = xmlDocument.SelectNodes("NewDataSet/SHOP");
+
+            foreach (XmlNode node in data)
+            {
+                Shop shop = new Shop();
+                shop.ShopSeq = System.Convert.ToInt32(node.SelectSingleNode("SHOP_SEQ").InnerText);
+                shop.ShopName = node.SelectSingleNode("SHOP_NAME").InnerText;
+                shop.ShopPrice = System.Convert.ToInt32(node.SelectSingleNode("SHOP_PRICE").InnerText);
+                shop.ShopLevel = System.Convert.ToInt32(node.SelectSingleNode("SHOP_LEVEL").InnerText);
+                shop.ShopSpriteString = node.SelectSingleNode("SHOP_SPRITE").InnerText;
+                shop.ShopSprite = shop.shopSprite();
+                shop.ShopValue = System.Convert.ToInt32(node.SelectSingleNode("SHOP_VALUE").InnerText);
+                shop.ItemSeq = System.Convert.ToInt32(node.SelectSingleNode("ITEM_SEQ").InnerText);
+                string type = node.SelectSingleNode("SHOP_TYPE").InnerText;
+                switch (type)
+                {
+                    case "Land": shop.shopType = Shop.ShopType.Land; break;
+                    case "Money": shop.shopType = Shop.ShopType.Money; break;
+                    case "Item": shop.shopType = Shop.ShopType.Item; break;
+                    case "Other": shop.shopType = Shop.ShopType.Other; break;
+                }
+                Shops.Add(shop);
+            }
+        }
+        Maria.SqlConnection.Close();
+    }
+    public XmlDocument OnLoadData(string DB)
     {
         StartSQL();
         string query = "SELECT * FROM " + DB;
@@ -116,7 +173,7 @@ public class InfoManager : MonoBehaviour
         xmlDocument.LoadXml(dataSet.GetXml());
         return xmlDocument;
     }
-    private void StartSQL()
+    public void StartSQL()
     {
         try
         {
@@ -189,8 +246,8 @@ public class InfoManager : MonoBehaviour
 
                 switch (type)
                 {
-                    case "disposable": item.itemtype = Item.Itemtype.Disposable; break;
-                    case "costume": item.itemtype = Item.Itemtype.Costume; break;
+                    case "disposable": item.itemType = Item.ItemType.Disposable; break;
+                    case "costume": item.itemType = Item.ItemType.Costume; break;
 
                 }
 
@@ -205,7 +262,7 @@ public class InfoManager : MonoBehaviour
     {
         StartSQL();
         UserInfo.UserSeq = 0;
-        //·Î±×ÀÎ Äõ¸®
+        //ë¡œê·¸ì¸ ì¿¼ë¦¬
         string query = "SELECT * FROM USER WHERE USER_ID = '" + InfoUserId + "' AND USER_PASSWORD = '" + InfoUserPassword + "'";
         DataSet dataSet = Maria.OnSelectRequest(query, "USER");
 
@@ -247,19 +304,19 @@ public class InfoManager : MonoBehaviour
 
         if (dataSet.GetXml().IndexOf("SEQ") >= 0)
         {
-            Debug.Log("ÀÌ¹Ì °¡ÀÔµÈ ¾ÆÀÌµğÀÔ´Ï´Ù.");
+            Debug.Log("ì´ë¯¸ ê°€ì…ëœ ì•„ì´ë””ì…ë‹ˆë‹¤.");
         }
         else
         {
-            //È¸¿ø°¡ÀÔ Äõ¸®
+            //íšŒì›ê°€ì… ì¿¼ë¦¬
             query = "INSERT INTO USER ( USER_ID, USER_LEVEL, USER_NAME, USER_PASSWORD )VALUES('" + InfoUserId + "', '1', '" + InfoUserName + "','" + InfoUserPassword + "')";
             if (Maria.OnInsertOrUpdateRequest(query))
             {
-                Debug.Log("È¸¿ø°¡ÀÔ¿¡ ¼º°øÇÏ¿´½À´Ï´Ù.");
+                Debug.Log("íšŒì›ê°€ì…ì— ì„±ê³µí•˜ì˜€ìŠµë‹ˆë‹¤.");
             }
             else
             {
-                Debug.Log("È¸¿ø°¡ÀÔ¿¡ ½ÇÆĞÇÏ¿´½À´Ï´Ù.");
+                Debug.Log("íšŒì›ê°€ì…ì— ì‹¤íŒ¨í•˜ì˜€ìŠµë‹ˆë‹¤.");
             }
         }
     }

@@ -61,13 +61,14 @@ public class LoginPanel : MonoBehaviour
             InfoManager.Instance.LoadFood();
             InfoManager.Instance.LoadItem();
             InfoManager.Instance.LoadMoney();
+            InfoManager.Instance.LoadShop();
             gameObject.SetActive(false);
         }
     }
     private void Sign()
     {
         InfoManager.Instance.SignUp(IdInputField.text, PassWordInputField.text,NameInputField.text);
-        InfoManager.Instance.InsertMoney();
+        InfoManager.Instance.InsertSQL(InfoManager.Instance.MoneyInsertQuery);
         Login();
     }
 }
