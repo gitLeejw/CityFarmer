@@ -4,6 +4,7 @@ public class ShopManager : MonoBehaviour
 {
 
     public InventoryManager Inventory;
+    public LandManager Land;
     public void ClickBuyButton(int shopSeq)
     {
         Shop shop = InfoManager.Instance.FindBySeq(InfoManager.Instance.Shops, shopSeq);
@@ -57,8 +58,17 @@ public class ShopManager : MonoBehaviour
             InfoManager.Instance.Money.moneyGold += food.FoodPrice;
 
         }
-        food.FoodValue -= value;
-        Inventory.PlayerFoodList[foodIndex] = food;
+        if(food.FoodValue > value)
+        {
+            food.FoodValue -= value;
+            Inventory.PlayerFoodList[foodIndex] = food;
+        }
+        else
+        {
+            Inventory.PlayerFoodList.RemoveAt(foodIndex);
+        }
+       
+       
 
         InfoManager.Instance.UpdateSQL(InfoManager.Instance.UserUpdateString());
     }
@@ -99,8 +109,10 @@ public class ShopManager : MonoBehaviour
     {
         UseMoney(shop);
         InfoManager.Instance.UserInfo.UserLandLevel++;
+        Mongo.InitMongoNodes();
+        InfoManager.Instance.UpdateSQL(InfoManager.Instance.MoneyUpdateString());
         InfoManager.Instance.UpdateSQL(InfoManager.Instance.UserUpdateString());
-
+        Land.LoadLand();
     }
     public void UseMoney(Shop shop)
     {

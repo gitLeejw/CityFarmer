@@ -62,5 +62,8 @@ public class InventoryManager : MonoBehaviour
         }
 
     }
-
+    public void SaveInventory()
+    {
+        Mongo.UpdateMongo<Inventory>(_inventory, null, _inventory);
+    }
 }

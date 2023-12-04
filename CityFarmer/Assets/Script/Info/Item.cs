@@ -29,4 +29,6 @@ public class Item
     }
 
     public int ItemValue { get; set; }
+
+    public void UserItem() { }
 }

@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Nodes : MonoBehaviour
+[SerializeField]
+public class Nodes
 {
     public object _id;
     public int LandSeq;

@@ -14,6 +14,7 @@ public class LandManager : MonoBehaviour
     public List<Vector3Int> Vector3MaxPostion;
     public Dictionary<Vector3Int, int> Vector3Node = new Dictionary<Vector3Int, int>();
     public List<Node> NodeList;
+  
     public List<Nodes> NodesList = new List<Nodes>();
     public Nodes ClickNodes;
     private Mongo _mongoDB;
@@ -72,10 +73,20 @@ public class LandManager : MonoBehaviour
     }
     public void LoadLand()
     {
+        Debug.Log(NodesList[0].Lands[3][0]);
         for (int currentland = 0; currentland < NodesList.Count; currentland++)
         {
             coordinate(currentland);
         }
+    }
+    public void SaveLand()
+    {
+       
+        for (int nodeIndex = 0; nodeIndex < NodesList.Count; nodeIndex++)
+        {
+            Mongo.UpdateMongoNodes(NodesList[nodeIndex]);
+        }
+
     }
     private void coordinate(int land)
     {
@@ -97,8 +108,12 @@ public class LandManager : MonoBehaviour
             node.SetNodeTile();
             NodeList.Add(node);
             Vector3Node.Add(node.GetPosition(), land);
-            Tilemap.SetTile(node.GetPosition(), node.GetStateNodeTile()); // 타일 변경
+            ChangeTile(node); // 타일 변경
         }
+    }
+    public void ChangeTile(Node node)
+    {
+        Tilemap.SetTile(node.GetPosition(), node.GetStateNodeTile());
     }
     public int ConvertTimer(string inputTime)
     {
