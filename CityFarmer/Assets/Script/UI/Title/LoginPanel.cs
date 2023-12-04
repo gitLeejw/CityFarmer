@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class LoginPanel : MonoBehaviour
 {
@@ -56,7 +57,7 @@ public class LoginPanel : MonoBehaviour
     }
     private void Login()
     {
-        if (InfoManager.Instance.Login(IdInputField.text, PassWordInputField.text))
+        if (InfoManager.Instance.Login(IdInputField.text,PassWordInputField.text))
         {
             InfoManager.Instance.LoadFood();
             InfoManager.Instance.LoadItem();
@@ -64,6 +65,20 @@ public class LoginPanel : MonoBehaviour
             InfoManager.Instance.LoadShop();
             gameObject.SetActive(false);
         }
+    }
+    public void TestLogin()
+    {
+        if (InfoManager.Instance.Login("kos1515", "dnflskfk1"))
+        {
+            InfoManager.Instance.LoadFood();
+            InfoManager.Instance.LoadItem();
+            InfoManager.Instance.LoadMoney();
+            InfoManager.Instance.LoadShop();
+            gameObject.SetActive(false);
+        }
+
+        SceneManager.LoadScene("FarmScene");
+
     }
     private void Sign()
     {

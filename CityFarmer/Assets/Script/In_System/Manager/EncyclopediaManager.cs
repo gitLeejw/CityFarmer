@@ -17,7 +17,7 @@ public class EncyclopediaManager : MonoBehaviour
         _mongoDB = instance.GetComponent<Mongo>();
     }
 
-    private void Start()
+    public void Init()
     {
         InitDB();
         InitFoodCount();

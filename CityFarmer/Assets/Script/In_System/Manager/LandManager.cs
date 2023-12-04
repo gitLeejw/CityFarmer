@@ -73,7 +73,6 @@ public class LandManager : MonoBehaviour
     }
     public void LoadLand()
     {
-        Debug.Log(NodesList[0].Lands[3][0]);
         for (int currentland = 0; currentland < NodesList.Count; currentland++)
         {
             coordinate(currentland);

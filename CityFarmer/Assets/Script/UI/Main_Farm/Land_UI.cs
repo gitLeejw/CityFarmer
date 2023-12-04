@@ -25,7 +25,10 @@ public class Land_UI : MonoBehaviour
     }
     public GameObject CreateTimerText(Vector3 timerpos, string time)
     {
-        GameObject timerText = Instantiate(Timer, timerpos, Quaternion.identity, CanvesTr);
+        GameObject timerText = Instantiate(Timer,timerpos,Quaternion.identity);
+        timerText.transform.parent = transform;
+        timerText.transform.position = new Vector3(timerpos.x,timerpos.y,transform.position.z);
+        timerText.transform.localScale = transform.localScale * 0.6f;
         timerText.GetComponent<TextMeshProUGUI>().text = time;
         return timerText;
     }
@@ -49,7 +52,6 @@ public class Land_UI : MonoBehaviour
         }
         else if (_deltaTime[nodeIndex] < 0 && Land.NodeList[nodeIndex].GetFoodSeq() != 0) 
         {
-            Debug.Log(nodeIndex);
             Land.NodeList[nodeIndex].State = Node.NodeState.Cultivating;
             Land.NodeList[nodeIndex].SetNodeTile();
             Land.ChangeTile(Land.NodeList[nodeIndex]);
