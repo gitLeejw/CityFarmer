@@ -31,9 +31,8 @@ public class MainFarmButtonManager : MonoBehaviour
         for (int currentButtonSize = 0; currentButtonSize < maxButtonSize; ++currentButtonSize)
         {
             _buttons[currentButtonSize] = transform.GetChild(currentButtonSize).GetComponent<Button>();
-            string PopUpName = $"UI/Main_Farm/{_buttons[currentButtonSize].name}PopUp";
-
-            InitButtonPopUp(PopUpName, _buttons[currentButtonSize]);
+            string PopUpPath = $"UI/Main_Farm/{_buttons[currentButtonSize].name}PopUp";
+            InitButtonPopUp(PopUpPath, _buttons[currentButtonSize]);
         }
     }
 

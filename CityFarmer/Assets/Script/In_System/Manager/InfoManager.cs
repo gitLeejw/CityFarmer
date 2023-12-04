@@ -13,7 +13,7 @@ public class InfoManager : MonoBehaviour
 {
     public UserInfo UserInfo;
     public Money Money;
-   
+
     public List<Item> Items = new List<Item>();
     public List<Food> Foods = new List<Food>();
     private static InfoManager _instance;
@@ -28,12 +28,19 @@ public class InfoManager : MonoBehaviour
                 _instance = FindObjectOfType(typeof(InfoManager)) as InfoManager;
 
                 if (_instance == null)
-                    Debug.Log("no Singleton obj");
+                {
+                    Debug.Log("no Singleton obj and create Info Manager");
+                    //Init();
+                }
             }
             return _instance;
         }
     }
-
+    private static void Init()
+    {
+        GameObject gameObject = new GameObject("InfoManager");
+        _instance = gameObject.AddComponent<InfoManager>();
+    }
     private void Awake()
     {
         if (_instance == null)
@@ -51,7 +58,7 @@ public class InfoManager : MonoBehaviour
     public void InsertMoney()
     {
         StartSQL();
-        string query = "INSERT INTO MONEY ( USER_SEQ, MONEY_GOLD,MONEY_RUBY )VALUES('"+UserInfo.UserSeq+"',0,0)";
+        string query = "INSERT INTO MONEY ( USER_SEQ, MONEY_GOLD,MONEY_RUBY )VALUES('" + UserInfo.UserSeq + "',0,0)";
 
         Maria.OnInsertOrUpdateRequest(query);
         Maria.SqlConnection.Close();
@@ -59,14 +66,14 @@ public class InfoManager : MonoBehaviour
     public void LoadMoney()
     {
         StartSQL();
-        string query = "SELECT * FROM MONEY WHERE USER_SEQ = '"+UserInfo.UserSeq+"'" ;
-        DataSet dataSet = Maria.OnSelectRequest(query,"MONEY");
+        string query = "SELECT * FROM MONEY WHERE USER_SEQ = '" + UserInfo.UserSeq + "'";
+        DataSet dataSet = Maria.OnSelectRequest(query, "MONEY");
         XmlDocument xmlDocument = new XmlDocument();
         xmlDocument.LoadXml(dataSet.GetXml());
         if (xmlDocument != null)
         {
             XmlNodeList data = xmlDocument.SelectNodes("NewDataSet/MONEY");
-         
+
 
             foreach (XmlNode node in data)
             {
@@ -74,7 +81,7 @@ public class InfoManager : MonoBehaviour
                 Money.moneyRuby = System.Convert.ToInt32(node.SelectSingleNode("MONEY_RUBY").InnerText);
             }
         }
-        Maria.SqlConnection.Close();    
+        Maria.SqlConnection.Close();
     }
     public T FindBySeq<T>(List<T> TList, int Seq)
     {
@@ -208,10 +215,10 @@ public class InfoManager : MonoBehaviour
         if (xmlDocument != null)
         {
             XmlNodeList user = xmlDocument.SelectNodes("NewDataSet/USER");
-          
+
             foreach (XmlNode node in user)
             {
-                
+
                 UserInfo.UserSeq = System.Convert.ToInt32(node.SelectSingleNode("USER_SEQ").InnerText);
                 UserInfo.UserLevel = System.Convert.ToInt32(node.SelectSingleNode("USER_LEVEL").InnerText);
                 UserInfo.UserId = node.SelectSingleNode("USER_ID").InnerText;
@@ -229,7 +236,7 @@ public class InfoManager : MonoBehaviour
         {
             return true;
         }
-        
+
     }
 
     public void SignUp(string InfoUserId, string InfoUserPassword, string InfoUserName)
