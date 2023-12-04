@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class GPSManager : MonoBehaviour
 {
-    public static GPSManager Instance;
+   
    
     private float _maxWaitTime = 10.0f;
     private float _resendTime = 1.0f;
@@ -18,25 +18,56 @@ public class GPSManager : MonoBehaviour
 
     private bool _receiveGPS = false;
 
-    private void Awake()
+    private static GPSManager _instance;
+    public static GPSManager Instance
     {
-        if (Instance == null)
+        get
         {
-            Instance = this;
+            // 인스턴스가 없는 경우에 접근하려 하면 인스턴스를 할당해준다.
+            if (!_instance)
+            {
+                _instance = FindObjectOfType(typeof(GPSManager)) as GPSManager;
+
+                if (_instance == null)
+                    Debug.Log("no Singleton obj");
+            }
+
+            return _instance;
         }
     }
+    private void Awake()
+    {
+        if (_instance == null)
+        {
+            _instance = this;
+        }
+        // 인스턴스가 존재하는 경우 새로생기는 인스턴스를 삭제한다.
+        else if (_instance != this)
+        {
+            Destroy(gameObject);
+        }
+        // 아래의 함수를 사용하여 씬이 전환되더라도 선언되었던 인스턴스가 파괴되지 않는다.
+        DontDestroyOnLoad(gameObject);
+    }
 
-    [System.Obsolete]
-    void Start()
+
+    private void Start()
     {
         StartCoroutine(GPS_On());
     }
 
     //GPS처리 함수
-    [System.Obsolete]
+
     public IEnumerator GPS_On()
     {
-       
+#if UNITY_EDITOR
+        //유니티 리모트 대기
+        while (!UnityEditor.EditorApplication.isRemoteConnected)
+        {
+            yield return null;
+        }
+#endif
+
         //만일,GPS사용 허가를 받지 못했다면, 권한 허가 팝업을 띄움
         if (!Permission.HasUserAuthorizedPermission(Permission.FineLocation))
         {
@@ -48,13 +79,7 @@ public class GPSManager : MonoBehaviour
         }
 
         //만일 GPS 장치가 켜져 있지 않으면 위치 정보를 수신할 수 없다고 표시
-#if UNITY_EDITOR
-        //Wait until Unity connects to the Unity Remote, while not connected, yield return null
-        while (!UnityEditor.EditorApplication.isRemoteConnected)
-        {
-            yield return null;
-        }
-#endif
+
       
         if (!Input.location.isEnabledByUser)
         {
@@ -75,36 +100,34 @@ public class GPSManager : MonoBehaviour
         //수신 실패 시 수신이 실패됐다는 것을 출력
         if (Input.location.status == LocationServiceStatus.Failed)
         {
-        
+            Debug.Log("수신 실패");
         }
 
         //응답 대기 시간을 넘어가도록 수신이 없었다면 시간 초과됐음을 출력
         if (_waitTime >= _maxWaitTime)
         {
-          
+            Debug.Log("시간 초과");
         }
-
-        //수신된 GPS 데이터를 화면에 출력/
-
+        Input.location.Start();
+       
+      
         LocationInfo li = Input.location.lastData;
-        /*latitude = li.latitude;
-       longitude = li.longitude;
-       latitude_text.text = "위도 : " + latitude.ToString();
-       longitude_text.text = "경도 : " + longitude.ToString();
-       */
-        //위치 정보 수신 시작 체크
+
         _receiveGPS = true;
-        Weather.CheckCityWeather(_latitude, _longitude);
-        //위치 데이터 수신 시작 이후 resendTime 경과마다 위치 정보를 갱신하고 출력
+
+      
         while (_receiveGPS)
         {
             li = Input.location.lastData;
             _latitude = li.latitude;
             _longitude = li.longitude;
-
+            if(_latitude != 0)
+            {
+                break;
+            }
             yield return new WaitForSeconds(_resendTime);
         }
-      
-        
+
+        Weather.CheckCityWeather(_latitude, _longitude);
     }
 }

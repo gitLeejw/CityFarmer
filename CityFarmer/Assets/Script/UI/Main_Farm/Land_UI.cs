@@ -40,12 +40,23 @@ public class Land_UI : MonoBehaviour
     }
     private void ProgressTime(int nodeIndex)
     {
-        if (_deltaTime[nodeIndex] > 0)
+        if (_deltaTime[nodeIndex] >= 0)
         {
             _deltaTime[nodeIndex] -= Time.deltaTime;
             Land.NodeList[nodeIndex].SetTimer((int)_deltaTime[nodeIndex]);
+            Land.NodesList[nodeIndex / 9].Lands[nodeIndex % 9][1] = (int)_deltaTime[nodeIndex];
             _timers[nodeIndex].GetComponent<TextMeshProUGUI>().text = Land.ConvertString((int)_deltaTime[nodeIndex]);
         }
+        else if (_deltaTime[nodeIndex] < 0 && Land.NodeList[nodeIndex].GetFoodSeq() != 0) 
+        {
+            Debug.Log(nodeIndex);
+            Land.NodeList[nodeIndex].State = Node.NodeState.Cultivating;
+            Land.NodeList[nodeIndex].SetNodeTile();
+            Land.ChangeTile(Land.NodeList[nodeIndex]);
+            Land.NodesList[nodeIndex / 9].Lands[nodeIndex % 9][2] = 1;
+
+        }
+       
     }
 
 

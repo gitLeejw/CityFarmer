@@ -652,6 +652,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GPSManager
       objectReference: {fileID: 0}
+    - target: {fileID: 6538050455723778836, guid: de1fe4108ac931d4597000722248910e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6538050455723778839, guid: de1fe4108ac931d4597000722248910e, type: 3}
       propertyPath: m_RootOrder
       value: 4

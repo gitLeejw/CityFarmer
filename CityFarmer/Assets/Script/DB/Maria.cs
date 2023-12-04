@@ -7,7 +7,7 @@ public class Maria
 {
     public static MySqlConnection SqlConnection;
 
-    static string _ipAddress = "13.209.206.108";
+    static string _ipAddress = "13.124.59.40";
     static string _dbId = "root";
     static string _dbPw = "dnflskfk1";
     static string _dbName = "unityDB";

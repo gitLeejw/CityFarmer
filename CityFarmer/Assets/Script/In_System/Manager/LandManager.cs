@@ -1,12 +1,10 @@
-using MySql.Data.MySqlClient;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Xml;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
 
 public class LandManager : MonoBehaviour
 {
@@ -16,6 +14,7 @@ public class LandManager : MonoBehaviour
     public List<Vector3Int> Vector3MaxPostion;
     public Dictionary<Vector3Int, int> Vector3Node = new Dictionary<Vector3Int, int>();
     public List<Node> NodeList;
+  
     public List<Nodes> NodesList = new List<Nodes>();
     public Nodes ClickNodes;
     private Mongo _mongoDB;
@@ -53,9 +52,10 @@ public class LandManager : MonoBehaviour
     }
     private void Update()
     {
-        Vector3Int mousePos = GetMousePosition();
+      // 이후 리팩토링 과정을 거쳐 업데이트문에서 삭제
         if (Input.GetMouseButton(0))
         {
+            Vector3Int mousePos = GetMousePosition();
             if (Vector3Node.ContainsKey(mousePos)&&OnNodePopUp)
             {
                 LandSeq = Vector3Node[mousePos];
@@ -73,12 +73,19 @@ public class LandManager : MonoBehaviour
     }
     public void LoadLand()
     {
-      
+        Debug.Log(NodesList[0].Lands[3][0]);
         for (int currentland = 0; currentland < NodesList.Count; currentland++)
         {
             coordinate(currentland);
         }
-
+    }
+    public void SaveLand()
+    {
+       
+        for (int nodeIndex = 0; nodeIndex < NodesList.Count; nodeIndex++)
+        {
+            Mongo.UpdateMongoNodes(NodesList[nodeIndex]);
+        }
 
     }
     private void coordinate(int land)
@@ -88,13 +95,10 @@ public class LandManager : MonoBehaviour
         List<Vector3Int> vector3s = new List<Vector3Int>();
         for (int x = minPosition.x; x <= maxPosition.x; x++)
         {
-
             for (int y = minPosition.y; y <= maxPosition.y; y++)
             {
                 Vector3Int tilePosition = new Vector3Int(x, y, 0);
                 vector3s.Add(tilePosition);
-              
-
             }
         }
         for (int tileCount = 0; tileCount< vector3s.Count; tileCount++)
@@ -103,10 +107,13 @@ public class LandManager : MonoBehaviour
             node.State = (Node.NodeState)NodesList[land].Lands[tileCount][2];
             node.SetNodeTile();
             NodeList.Add(node);
-           
             Vector3Node.Add(node.GetPosition(), land);
-            Tilemap.SetTile(node.GetPosition(), node.GetStateNodeTile()); // 타일 변경
+            ChangeTile(node); // 타일 변경
         }
+    }
+    public void ChangeTile(Node node)
+    {
+        Tilemap.SetTile(node.GetPosition(), node.GetStateNodeTile());
     }
     public int ConvertTimer(string inputTime)
     {
@@ -132,12 +139,8 @@ public class LandManager : MonoBehaviour
     }
     public string ConvertTimeString(string inputTime)
     {
-       
         TimeSpan timeSpan = XmlConvert.ToTimeSpan(inputTime);
-
-    
         string formattedTime = $"{(int)timeSpan.TotalHours}:{timeSpan.Minutes}:{timeSpan.Seconds}";
-
         return formattedTime;
     }
     public void LeveUPChangeLandTile(int LandLevel)

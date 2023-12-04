@@ -11,7 +11,7 @@ public class UserInfo : MonoBehaviour
     public string UserReg { get; set; }
 
     public int UserLandLevel { get; set; }
-
+    public int UserExp { get; set; }
 
 
 }

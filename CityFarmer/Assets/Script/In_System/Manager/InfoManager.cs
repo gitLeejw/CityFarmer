@@ -1,11 +1,10 @@
+using MongoDB.Bson;
 using MySql.Data.MySqlClient;
-using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Xml;
 using UnityEngine;
-using System.Linq;
-using MongoDB.Bson;
 
 
 
@@ -13,9 +12,12 @@ public class InfoManager : MonoBehaviour
 {
     public UserInfo UserInfo;
     public Money Money;
-   
+    public List<Shop> Shops = new List<Shop>();
     public List<Item> Items = new List<Item>();
     public List<Food> Foods = new List<Food>();
+    public string MoneyUpdateQuery = "";
+    public string MoneyInsertQuery = "";
+    public string UserUpdateQuery = "";
     private static InfoManager _instance;
     // 인스턴스에 접근하기 위한 프로퍼티
     public static InfoManager Instance
@@ -48,10 +50,32 @@ public class InfoManager : MonoBehaviour
         // 아래의 함수를 사용하여 씬이 전환되더라도 선언되었던 인스턴스가 파괴되지 않는다.
         DontDestroyOnLoad(gameObject);
     }
-    public void InsertMoney()
+    public string MoneyUpdateString()
+    {
+        MoneyUpdateQuery = "UPDATE MONEY SET MONEY_GOLD = '" + Money.moneyGold + "', MONEY_RUBY = '" + Money.moneyRuby + "' WHERE USER_SEQ = '" + UserInfo.UserSeq + "';";
+        return MoneyUpdateQuery;
+    }
+    public string MoneyInsertString()
+    {
+        MoneyInsertQuery = "INSERT INTO MONEY ( USER_SEQ, MONEY_GOLD,MONEY_RUBY )VALUES('" + UserInfo.UserSeq + "',0,0)";
+        return MoneyInsertQuery;
+    }
+    public string UserUpdateString()
+    {
+        UserUpdateQuery = "UPDATE USER SET USER_LANDLEVEL = '" + UserInfo.UserLandLevel + "', USER_LEVEL = '" + UserInfo.UserLevel + "', USER_EXP = '" + UserInfo.UserExp + "' WHERE USER_SEQ ='" + UserInfo.UserSeq + "';";
+        return UserUpdateQuery;
+    }
+    public void UpdateSQL(string query)
     {
         StartSQL();
-        string query = "INSERT INTO MONEY ( USER_SEQ, MONEY_GOLD,MONEY_RUBY )VALUES('"+UserInfo.UserSeq+"',0,0)";
+
+        Maria.OnInsertOrUpdateRequest(query);
+        Maria.SqlConnection.Close();
+    }
+    public void InsertSQL(string query)
+    {
+        StartSQL();
+        
 
         Maria.OnInsertOrUpdateRequest(query);
         Maria.SqlConnection.Close();
@@ -99,8 +123,41 @@ public class InfoManager : MonoBehaviour
         return int.Parse(typeSeq);
     }
 
+    public void LoadShop()
+    {
+        StartSQL();
+        Shops.Clear();
+        XmlDocument xmlDocument = Instance.OnLoadData("SHOP");
 
-    private XmlDocument OnLoadData(string DB)
+        if (xmlDocument != null)
+        {
+            XmlNodeList data = xmlDocument.SelectNodes("NewDataSet/SHOP");
+
+            foreach (XmlNode node in data)
+            {
+                Shop shop = new Shop();
+                shop.ShopSeq = System.Convert.ToInt32(node.SelectSingleNode("SHOP_SEQ").InnerText);
+                shop.ShopName = node.SelectSingleNode("SHOP_NAME").InnerText;
+                shop.ShopPrice = System.Convert.ToInt32(node.SelectSingleNode("SHOP_PRICE").InnerText);
+                shop.ShopLevel = System.Convert.ToInt32(node.SelectSingleNode("SHOP_LEVEL").InnerText);
+                shop.ShopSpriteString = node.SelectSingleNode("SHOP_SPRITE").InnerText;
+                shop.ShopSprite = shop.shopSprite();
+                shop.ShopValue = System.Convert.ToInt32(node.SelectSingleNode("SHOP_VALUE").InnerText);
+                shop.ItemSeq = System.Convert.ToInt32(node.SelectSingleNode("ITEM_SEQ").InnerText);
+                string type = node.SelectSingleNode("SHOP_TYPE").InnerText;
+                switch (type)
+                {
+                    case "Land": shop.shopType = Shop.ShopType.Land; break;
+                    case "Money": shop.shopType = Shop.ShopType.Money; break;
+                    case "Item": shop.shopType = Shop.ShopType.Item; break;
+                    case "Other": shop.shopType = Shop.ShopType.Other; break;
+                }
+                Shops.Add(shop);
+            }
+        }
+        Maria.SqlConnection.Close();
+    }
+    public XmlDocument OnLoadData(string DB)
     {
         StartSQL();
         string query = "SELECT * FROM " + DB;
@@ -109,7 +166,7 @@ public class InfoManager : MonoBehaviour
         xmlDocument.LoadXml(dataSet.GetXml());
         return xmlDocument;
     }
-    private void StartSQL()
+    public void StartSQL()
     {
         try
         {
@@ -182,8 +239,8 @@ public class InfoManager : MonoBehaviour
 
                 switch (type)
                 {
-                    case "disposable": item.itemtype = Item.Itemtype.Disposable; break;
-                    case "costume": item.itemtype = Item.Itemtype.Costume; break;
+                    case "disposable": item.itemType = Item.ItemType.Disposable; break;
+                    case "costume": item.itemType = Item.ItemType.Costume; break;
 
                 }
 

@@ -1,10 +1,9 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
-using UnityEngine.EventSystems;
 using System.Linq;
+using TMPro;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 public class Inventory_UI : MonoBehaviour
 {
     public InventoryManager Inventory;
@@ -40,10 +39,24 @@ public class Inventory_UI : MonoBehaviour
     public void ShowButton()
     {
         Transform panel = transform.GetChild(0);
-      
+        ShowButtonFood(panel);
+
+
+        panel = transform.GetChild(1);
+        Inventory.PlayerItemList = Inventory.PlayerItemList.OrderBy(obj => obj.itemType).ToList();
+        ShowButtonItem(panel, SearchCostumeIndex(Inventory.PlayerItemList),0);
+        panel = transform.GetChild(2);
+
+        if(SearchCostumeIndex(Inventory.PlayerItemList) > 0)
+        {
+            ShowButtonItem(panel, Inventory.PlayerItemList.Count , SearchCostumeIndex(Inventory.PlayerItemList));
+        }
+    }
+    public void ShowButtonFood(Transform panel)
+    {
         for (int childIndex = 0; childIndex < panel.childCount; childIndex++)
         {
-            if (Inventory.PlayerFoodList.Count>childIndex)
+            if (Inventory.PlayerFoodList.Count > childIndex)
             {
                 if (panel.GetChild(childIndex).name.Contains("ItemButton"))
                 {
@@ -56,15 +69,6 @@ public class Inventory_UI : MonoBehaviour
             {
                 break;
             }
-        }
-        panel = transform.GetChild(1);
-        Inventory.PlayerItemList = Inventory.PlayerItemList.OrderBy(obj => obj.itemtype).ToList();
-        ShowButtonItem(panel, SearchCostumeIndex(Inventory.PlayerItemList),0);
-        panel = transform.GetChild(2);
-
-        if(SearchCostumeIndex(Inventory.PlayerItemList) > 0)
-        {
-            ShowButtonItem(panel, Inventory.PlayerItemList.Count , SearchCostumeIndex(Inventory.PlayerItemList));
         }
     }
     void ShowButtonItem(Transform panel, int Count, int StartCount)
@@ -116,7 +120,7 @@ public class Inventory_UI : MonoBehaviour
         int index;
         for(index = 0; index < items.Count; index++)
         {
-            if(items[index].itemtype == Item.Itemtype.Costume)
+            if(items[index].itemType == Item.ItemType.Costume)
             {
                 return index;
             }

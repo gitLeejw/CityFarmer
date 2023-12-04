@@ -14,6 +14,6 @@ public class GameStartButton : MonoBehaviour
 
     private void GameStart()
     {
-        SceneManager.LoadScene("LandScene");
+        SceneManager.LoadScene("FarmScene");
     }
 }
