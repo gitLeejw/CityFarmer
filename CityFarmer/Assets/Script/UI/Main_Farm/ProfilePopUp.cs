@@ -41,8 +41,8 @@ public class ProfilePopUp : MonoBehaviour
         InitTexts();
         InitButtons();
         // TODO : 테스트 후 동작
-        //InitCount();
-        //InitTextValue();
+        InitCount();
+        InitTextValue();
     }
 
     private void InitTexts()

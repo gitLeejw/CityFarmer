@@ -7,12 +7,13 @@ public class InventoryManager : MonoBehaviour
 {
     private Inventory _inventory;
     private Mongo _mongoDB;
-    public List<Item> PlayerItemList;
-    public List<int> PlayerItemValueList;
-    public List<Food> PlayerFoodList;
-    public List<int> PlayerFoodValueList;
 
-    void Awake()
+    public List<Item> PlayerItemList;
+    public List<int> PlayerItemValueList { get; set; }
+    public List<Food> PlayerFoodList { get; set; }
+    public List<int> PlayerFoodValueList { get; set; }
+
+    public void Init()
     {
         GameObject _gameObject = InfoManager.Instance.gameObject;
         _inventory = _gameObject.GetComponent<Inventory>();
@@ -38,11 +39,13 @@ public class InventoryManager : MonoBehaviour
             List<Item> items = InfoManager.Instance.Items;
             List<Food> foods = InfoManager.Instance.Foods;
 
+            PlayerItemList = new List<Item>();
+            PlayerFoodList= new List<Food>();
+
             for (int inventoryIndex = 0; inventoryIndex < _inventory.ItemSeqs.Count; inventoryIndex++)
             {
-
-
                 Item item = InfoManager.Instance.FindBySeq(items, _inventory.ItemSeqs[inventoryIndex]);
+                
                 item.ItemValue = _inventory.ItemValues[inventoryIndex];
                 PlayerItemList.Add(item);
 

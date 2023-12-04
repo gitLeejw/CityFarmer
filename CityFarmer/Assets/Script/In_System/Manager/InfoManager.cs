@@ -283,7 +283,6 @@ public class InfoManager : MonoBehaviour
                 UserInfo.UserReg = node.SelectSingleNode("USER_REG").InnerText;
             }
         }
-        Debug.Log(UserInfo.UserSeq);
         Maria.SqlConnection.Close();
         if (UserInfo.UserSeq == 0)
         {

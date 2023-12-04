@@ -19,7 +19,7 @@ public class EncyclopediaPopUp : MonoBehaviour
     {
         Init();
         InitFoods();
-        //InitCollectionCount();
+        InitCollectionCount();
     }
 
     private void Init()
@@ -32,8 +32,8 @@ public class EncyclopediaPopUp : MonoBehaviour
 
     private void InitCollectionCount()
     {
-        _currentCollection.text = MainUIManager.EncyclopediaManager.CurrentCollectionFoods.ToString();
-        _maxCollection.text = MainUIManager.EncyclopediaManager.MaxCollectionFoods.ToString();
+        _currentCollection.text = GameManager.EncyclopediaManager.CurrentCollectionFoods.ToString();
+        _maxCollection.text = GameManager.EncyclopediaManager.MaxCollectionFoods.ToString();
     }
 
     private void InitFoods()

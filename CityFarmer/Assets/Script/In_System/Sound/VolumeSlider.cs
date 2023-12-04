@@ -28,7 +28,7 @@ public class VolumeSlider : MonoBehaviour
 
     public void ChangeVolume(float value)
     {
-        MainUIManager.SoundManager.SetVolume(_soundType, value);
+        GameManager.SoundManager.SetVolume(_soundType, value);
         Debug.Log("¤±¤¤¤·");
     }
 }

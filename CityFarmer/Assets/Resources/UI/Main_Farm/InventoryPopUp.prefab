@@ -13148,7 +13148,7 @@ GameObject:
   - component: {fileID: 9045101943761854171}
   - component: {fileID: 9045101943761854169}
   m_Layer: 5
-  m_Name: InventoryPanel
+  m_Name: InventoryPopUp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
