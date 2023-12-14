@@ -14,7 +14,7 @@ public class LandManager : MonoBehaviour
     public List<Vector3Int> Vector3MaxPostion;
     public Dictionary<Vector3Int, int> Vector3Node = new Dictionary<Vector3Int, int>();
     public List<Node> NodeList;
-  
+
     public List<Nodes> NodesList = new List<Nodes>();
     public Nodes ClickNodes;
     private Mongo _mongoDB;
@@ -24,7 +24,7 @@ public class LandManager : MonoBehaviour
     private void Awake()
     {
         GameObject _gameObject = InfoManager.Instance.gameObject;
-        
+
         _mongoDB = _gameObject.GetComponent<Mongo>();
         _mongoDB.MongoDBConnection();
 
@@ -42,21 +42,21 @@ public class LandManager : MonoBehaviour
             Vector3MinPostion.Add(minPosition);
             Vector3MaxPostion.Add(maxPosition);
         }
-   
+
     }
-    
+
     private void Start()
     {
         LoadLand();
-
     }
     private void Update()
     {
-      // 이후 리팩토링 과정을 거쳐 업데이트문에서 삭제
+        // 이후 리팩토링 과정을 거쳐 업데이트문에서 삭제
         if (Input.GetMouseButton(0))
         {
             Vector3Int mousePos = GetMousePosition();
-            if (Vector3Node.ContainsKey(mousePos)&&OnNodePopUp)
+            Debug.Log(ASD(Input.mousePosition));
+            if (Vector3Node.ContainsKey(mousePos) && OnNodePopUp)
             {
                 LandSeq = Vector3Node[mousePos];
                 _nodePopUp.SetActive(true);
@@ -65,6 +65,22 @@ public class LandManager : MonoBehaviour
             }
 
         }
+    }
+
+    private bool ASD(Vector3 mousePosition)
+    {
+        Vector3 a1 = new Vector3(120, 305, 0);
+        Vector3 a2 = new Vector3(538, 65, 0);
+
+        if (mousePosition.x >= a1.x && mousePosition.y <= a1.y)
+        {
+            if (mousePosition.x <= a2.x && mousePosition.y >= a2.y)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
     public Vector3Int GetMousePosition()
     {
@@ -80,7 +96,7 @@ public class LandManager : MonoBehaviour
     }
     public void SaveLand()
     {
-       
+
         for (int nodeIndex = 0; nodeIndex < NodesList.Count; nodeIndex++)
         {
             Mongo.UpdateMongoNodes(NodesList[nodeIndex]);
@@ -100,7 +116,7 @@ public class LandManager : MonoBehaviour
                 vector3s.Add(tilePosition);
             }
         }
-        for (int tileCount = 0; tileCount< vector3s.Count; tileCount++)
+        for (int tileCount = 0; tileCount < vector3s.Count; tileCount++)
         {
             Node node = new Node(vector3s[tileCount], NodesList[land].Lands[tileCount][0], NodesList[land].Lands[tileCount][1]);
             node.State = (Node.NodeState)NodesList[land].Lands[tileCount][2];
@@ -129,10 +145,10 @@ public class LandManager : MonoBehaviour
         string timer = "";
         int h, m, s;
         h = inputTime / 3600;
-        m = inputTime / 60 %60;
+        m = inputTime / 60 % 60;
         s = inputTime % 60;
-        timer += h.ToString()+":";
-        timer += m.ToString()+ ":";
+        timer += h.ToString() + ":";
+        timer += m.ToString() + ":";
         timer += s.ToString();
         return timer;
     }
